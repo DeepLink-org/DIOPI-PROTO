@@ -290,7 +290,6 @@ DIOPI_API diopiError_t diopiDivScalar(diopiContextHandle_t ctx, diopiTensorHandl
                                       const diopiScalar_t* other, diopiRoundMode_t rounding_mode);
 DIOPI_API diopiError_t diopiDivInpScalar(diopiContextHandle_t ctx, diopiTensorHandle_t input,
                                       const diopiScalar_t* other, diopiRoundMode_t rounding_mode);
-
 /**
  * \brief Broadcast-BLAS functions
  */
