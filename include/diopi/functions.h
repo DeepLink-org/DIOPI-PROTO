@@ -284,7 +284,11 @@ DIOPI_API diopiError_t diopiMulInpScalar(diopiContextHandle_t ctx, diopiTensorHa
 
 DIOPI_API diopiError_t diopiDiv(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
                                 diopiConstTensorHandle_t other, diopiRoundMode_t rounding_mode);
+DIOPI_API diopiError_t diopiDivInp(diopiContextHandle_t ctx, diopiTensorHandle_t input,
+                                diopiConstTensorHandle_t other, diopiRoundMode_t rounding_mode);
 DIOPI_API diopiError_t diopiDivScalar(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
+                                      const diopiScalar_t* other, diopiRoundMode_t rounding_mode);
+DIOPI_API diopiError_t diopiDivInpScalar(diopiContextHandle_t ctx, diopiTensorHandle_t input,
                                       const diopiScalar_t* other, diopiRoundMode_t rounding_mode);
 
 /**
