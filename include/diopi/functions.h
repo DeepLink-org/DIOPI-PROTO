@@ -1,9 +1,12 @@
-/**************************************************************************************************
- * Copyright (c) 2022, SenseTime Inc.
- * License
- * Author
- *
- *************************************************************************************************/
+/**
+ * @mainpage DIOPI
+ * @file
+ * @brief DIOPI 函数头文件
+ * @author sensetime
+ * @version 1.0.0 
+ * @copyright  (c) 2022, SenseTime Inc.
+ * @attention 所有diopi函数返回值均为执行过程是否出错
+ */
 
 #ifndef _PROJECT_DIOPERATOR_INTERFACE_FUNCTIONS_H_
 #define _PROJECT_DIOPERATOR_INTERFACE_FUNCTIONS_H_
@@ -14,7 +17,10 @@
 extern "C" {
 #endif  // __cplusplus
 
-
+/**
+ * @brief 规约枚举
+ * @details 包含四个枚举类别
+ */
 typedef enum {
     ReductionNone,
     ReductionMean,
@@ -22,6 +28,10 @@ typedef enum {
     ReductionEND
 } diopiReduction_t;
 
+/**
+ * @brief 取整枚举
+ * @details 包含四个枚举类别
+ */
 typedef enum {
     RoundModeNone,
     RoundModeTrunc,
@@ -29,6 +39,10 @@ typedef enum {
     RoundModeEND
 } diopiRoundMode_t;
 
+/**
+ * @brief 标量结构体
+ * @details 包含联合体成员变量，可以用于表示整型、浮点型或其他类型数据
+ */
 typedef struct {
     diopiDtype_t stype;
     union {
@@ -46,70 +60,237 @@ DIOPI_RT_API const char* diopiGetImplVersion();
 DIOPI_RT_API const char* diopiGetLastErrorString();
 
 /**
- * \brief Applies a 2D convolution over an input image composed of several input planes.
+ * @brief 对输入张量 input 应用2D卷积操作，并返回卷积结果
+ * @brief \f$\text{out}(N_i, C_{\text{out}_j}) = \text{bias}(C_{\text{out}_j}) + \sum_{k = 0}^{C_{\text{in}} - 1} \text{weight}(C_{\text{out}_j}, k) \star \text{input}(N_i, k)\f$
+ * @param[in] ctx 上下文环境
+ * @param input 输入张量，其形状为 \f$(\text{minibatch}, \text{in_channels}, iH, iW)\f$
+ * @param weight 卷积核，其形状为 \f$(\text{out_channels}, \text{in_channels/groups}, kH, kW)\f$
+ * @param bias 偏置项，其形状为 \f$(\text{out_channels})\f$ ，可以为空指针或未定义张量
+ * @param stride 卷积核的步长
+ * @param padding 输入张量每一侧的填充值
+ * @param dilation 卷积核元素之间的步长
+ * @param groups 输入张量 input 被分组的组数，该值必须被 in_channel 整除
+ * @param[out] out 结果张量
+ * @todo 增加参数transposed和output_padding
  */
 DIOPI_API diopiError_t diopiConvolution2d(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
                                           diopiConstTensorHandle_t weight, diopiConstTensorHandle_t bias, diopiSize_t stride,
                                           diopiSize_t padding, diopiSize_t dilation, int64_t groups);
-
+/**
+ * @brief 对输入张量 input 进行2D卷积反向传播操作，计算相关参数的梯度并返回
+ * @param[in] grad_output 反向传播下层节点传回的梯度
+ * @param bias_sizes 偏置项形状大小，可为空指针，当不为空时该值将用于计算偏置项梯度
+ * @param transposed 是否转置
+ * @param output_padding 输出张量的填充大小
+ * @param[out] grad_input 输入张量的梯度
+ * @param grad_weight 卷积核的梯度
+ * @param grad3 偏置项的梯度，若偏置项为空，则其梯度也为空，无需计算传回
+ * @sa 其他参数释义参考 diopiConvolution2d()
+ */
 DIOPI_API diopiError_t diopiConvolution2dBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiTensorHandle_t grad_weight,
                                                   diopiTensorHandle_t grad3, diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t input,
                                                   diopiConstTensorHandle_t weight, diopiSize_t *bias_sizes, diopiSize_t stride, diopiSize_t padding,
                                                   diopiSize_t dilation, bool transposed, diopiSize_t output_padding, int64_t groups);
 
 /**
- * \brief Applies Batch Normalization for each channel across a batch of data.
+ * @brief 对输入张量 input 的每个特征通道 channel 做批量标准化
+ * @brief \f$y = \frac{x - \mathrm{E}[x]}{ \sqrt{\mathrm{Var}[x] + \epsilon}} * \gamma + \beta\f$  \n
+ * @brief 其中，均值和方差为每个通道下小批量数据的均值和方差，\f$\gamma\f$ 和 \f$\beta\f$ 为长度为 C(通道数)的可学习张量。
+ * @brief 默认情况下，在运行期间，该层会对其计算的均值和方差进行估计，在估计时默认动量 momentum 为 0.1。
+ * @brief 若 training 被置为 ``True`` ，该层则不会追踪运行时统计数据 ( running_mean 和 running_var ) 来进行均值和方差的估计，
+ * 而是直接使用当前 batch 的数据进行估计。
+ * @param[in] ctx 上下文环境
+ * @param input 输入张量
+ * @param weight 权重项 \f$\gamma\f$
+ * @param bias 偏置项 \f$\beta\f$
+ * @param running_mean 加权统计后的均值
+ * @param running_var 加权统计后的方差
+ * @param training 判断是否在训练阶段
+ * @param momentum 用于计算运行时均值和方差
+ * @param eps 批量归一化时，加在分母上的值，以此保证数据稳定性
+ * @param[out] out 结果张量
+ * @param save_mean 用于计算反向传播的均值
+ * @param save_invstd 用于计算方向传播的方差
  */
 DIOPI_API diopiError_t diopiBatchNorm(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiTensorHandle_t save_mean,
                                       diopiTensorHandle_t save_invstd, diopiConstTensorHandle_t input, diopiConstTensorHandle_t weight,
                                       diopiConstTensorHandle_t bias, diopiConstTensorHandle_t running_mean,
                                       diopiConstTensorHandle_t running_var, bool training, double momentum, double eps);
+/**
+ * @brief 对输入张量 input 计算批量标准化反向传播
+ * @param[in] grad_output 反向传播下层节点传回的梯度
+ * @param save_mean 正向传播时的均值
+ * @param save_invstd 正向传播时的方差
+ * @param[out] grad_input 输入张量的梯度
+ * @param grad_weight 卷积核的梯度
+ * @param grad_bias 偏置项的梯度
+ * @sa 其他参数释义参考 diopiBatchNorm()
+ */
 DIOPI_API diopiError_t diopiBatchNormBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiTensorHandle_t grad_weight,
                                               diopiTensorHandle_t grad_bias, diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t input, diopiConstTensorHandle_t weight,
                                               diopiConstTensorHandle_t running_mean, diopiConstTensorHandle_t running_var, diopiConstTensorHandle_t save_mean,
                                               diopiConstTensorHandle_t save_invstd, bool training, double eps);
 
 /**
- * \brief Applies the rectified linear unit function element-wise
+ * @brief 对输入 input 张量逐元素做 relu 整流线性变换:
+ * @brief \f$\text{ReLU}(x) = (x)^+ = \max(0, x)\f$
+ * @param[in] ctx 上下文环境
+ * @param input 输入张量
+ * @param[out] out 结果张量 
  */
 DIOPI_API diopiError_t diopiRelu(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input);
+/**
+ * @param[out] input 结果张量，inplace操作覆盖原数据 
+ * @sa 其他释义参考 diopiRelu()
+ */
 DIOPI_API diopiError_t diopiReluInp(diopiContextHandle_t ctx, diopiTensorHandle_t input);
 
+/**
+ * @brief 对输入 input 张量逐元素做如下变换:
+ * @brief \f$\text{HardTanh}(x) = \begin{cases}
+ *              \text{max_val} & \text{ if } x > \text{ max_val } \\
+ *              \text{min_val} & \text{ if } x < \text{ min_val } \\
+ *              x & \text{ otherwise } \\
+ *          \end{cases}\f$
+ * @param[in] ctx 上下文环境
+ * @param input 输入张量
+ * @param min_val 线性范围的下限
+ * @param max_val 线性范围的上限
+ * @param[out] out 结果张量 
+ */
 DIOPI_API diopiError_t diopiHardtanh(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
                                      const diopiScalar_t* min_val, const diopiScalar_t* max_val);
+/**
+ * @param[out] input 结果张量，inplace操作覆盖原数据 
+ * @sa 其他释义参考 diopiHardtanh()
+ */
 DIOPI_API diopiError_t diopiHardtanhInp(diopiContextHandle_t ctx, diopiTensorHandle_t input, const diopiScalar_t* min_val, const diopiScalar_t* max_val);
+/**
+ * @brief 对输入 input 张量逐元素做如下变换的反向传播计算:
+ * @brief \f$\text{HardTanh}(x) = \begin{cases}
+ *              \text{max_val} & \text{ if } x > \text{ max_val } \\
+ *              \text{min_val} & \text{ if } x < \text{ min_val } \\
+ *              x & \text{ otherwise } \\
+ *          \end{cases}\f$
+ * @param[in] grad_output 反向传播下层节点传回的梯度
+ * @param[out] grad_input 输入张量的梯度
+ * @sa 其他释义参考 diopiHardtanh()
+ */
 DIOPI_API diopiError_t diopiHardtanhBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiConstTensorHandle_t grad_output,
                                              diopiConstTensorHandle_t input, const diopiScalar_t* min_val, const diopiScalar_t* max_val);
 
+/**
+ * @brief 对输入 input 张量逐元素做如下变换:
+ * @brief \f$y =\begin{cases}
+ *          x, &\text{ if } x > \text{threshold} \\
+ *          \text{value}, &\text{ otherwise }
+ *          \end{cases}\f$
+ * @param[in] ctx 上下文环境
+ * @param input 输入张量
+ * @param threshold 阈值
+ * @param value 填充值
+ * @param[out] out 结果张量 
+ */
 DIOPI_API diopiError_t diopiThreshold(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
                                      const diopiScalar_t* threshold, const diopiScalar_t* value);
+/**
+ * @param[out] input 结果张量，inplace操作覆盖原数据
+ * @sa 其他释义参考 diopiThreshold()
+ */
 DIOPI_API diopiError_t diopiThresholdInp(diopiContextHandle_t ctx, diopiTensorHandle_t input, const diopiScalar_t* threshold, const diopiScalar_t* value);
+/**
+ * @brief 对输入 input 张量逐元素做如下变换的反向传播:
+ * @brief \f$y =\begin{cases}
+ *          x, &\text{ if } x > \text{threshold} \\
+ *          \text{value}, &\text{ otherwise }
+ *          \end{cases}\f$
+ * @param[in] grad_output 反向传播下层节点传回的梯度
+ * @param[out] grad_input 输入张量的梯度
+ * @sa 其他释义参考 diopiThreshold()
+ */
 DIOPI_API diopiError_t diopiThresholdBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiConstTensorHandle_t grad_output,
                                              diopiConstTensorHandle_t input, const diopiScalar_t* threshold);
 
 /**
- * \brief Applies the gaussian error linear unit function element-wise
+ * @brief 对输入 input 张量逐元素做如下变换:
+ * @brief 如果 approximate 等于 ``none``: \n
+ * @brief \f$\text { GRELU  }(x)= x \times \Phi(x)\f$ \n
+ * @brief 其中 \f$\Phi(x)\f$ 是高斯分布的累积分布函数 \n
+ * @brief 如果 approximate 等于 ``tanh``, 将做以下近似估计: \n
+ * @brief \f$\text { GRELU  }(x)=  0.5 * x * (1 + \text{Tanh}(sqrt(2 / \pi) * (x + 0.044715 * x^3)))\f$
+ * @param[in] ctx 上下文环境
+ * @param input 输入张量
+ * @param approximate 是否采用近似估计
+ * @param[out] out 结果张量
+ * @note 目前还不支持 approximate 参数的测试
+ * @todo 增加对 approximate 参数的测试
  */
 DIOPI_API diopiError_t diopiGelu(diopiContextHandle_t ctx, diopiTensorHandle_t out,
                                  diopiConstTensorHandle_t input, const char* approximate);
+/**
+ * @brief 对输入 input 张量逐元素做如下变换的反向传播:
+ * @brief 如果 approximate 等于 ``none``: \n
+ * @brief \f$\text { GRELU  }(x)= x \times \Phi(x)\f$ \n
+ * @brief 其中 \f$\Phi(x)\f$ 是高斯分布的累积分布函数 \n
+ * @brief 如果 approximate 等于 ``tanh``, 将做以下近似估计: \n
+ * @brief \f$\text { GRELU  }(x)=  0.5 * x * (1 + \text{Tanh}(sqrt(2 / \pi) * (x + 0.044715 * x^3)))\f$
+ * @param[in] grad_output 反向传播下层节点传回的梯度
+ * @param[out] grad_input 输入张量的梯度
+ * @note 目前还不支持 approximate 参数的测试
+ * @todo 增加对 approximate 参数的测试
+ * @sa 其他释义参考 diopiGelu()
+ */
 DIOPI_API diopiError_t diopiGeluBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiConstTensorHandle_t grad_output,
                                          diopiConstTensorHandle_t input, const char* approximate);
 
 /**
- * \brief Applies element-wise, LeakyReLU(x) = max(0,x) + negative_slope*min(0,x)
+ * @brief 对张量 input 逐元素做 leaky_relu :
+ * @brief \f$\text { LeakyReLU }(x)=\max (0, x)+\text { negative_slope } * \min (0, x)\f$
+ * @param[in] ctx 上下文环境
+ * @param input 输入张量
+ * @param negative_slope 负斜率控制因子
+ * @param[out] out 结果张量
  */
 DIOPI_API diopiError_t diopiLeakyRelu(diopiContextHandle_t ctx, diopiTensorHandle_t out,
                                       diopiConstTensorHandle_t input, const diopiScalar_t* negative_slope);
+/**
+ * @param[out] input 结果张量，inplace操作覆盖原数据
+ * @sa 其他释义参考 diopiLeakyRelu()
+ */
 DIOPI_API diopiError_t diopiLeakyReluInp(diopiContextHandle_t ctx, diopiTensorHandle_t input, const diopiScalar_t* negative_slope);
+/**
+ * @brief 对张量 input 逐元素做 leaky_relu 的反向传播计算
+ * @param[in] grad_output 反向传播下层节点传回的梯度
+ * @param input_is_result 
+ * @param[out] grad_input 输入张量的梯度
+ * @sa 其他释义参考 diopiLeakyRelu()
+ */
 DIOPI_API diopiError_t diopiLeakyReluBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiConstTensorHandle_t grad_output,
                                               diopiConstTensorHandle_t input, const diopiScalar_t* negative_slope, bool input_is_result);
 
 /**
- * \brief Applies 2D average-pooling operation in kH×kW regions by step size sH×sW steps.
+ * @brief 在 \f$(kH, kW)\f$ 区域中按步长 \f$(sH, sW)\f$ 步长应用 2D 平均池化操作。 输出张量的通道数与输入张量的通道数相同。其操作描述为:
+ * @brief \f$out(N_i, C_j, h, w)  = \frac{1}{kH * kW} \sum_{m=0}^{kH-1} \sum_{n=0}^{kW-1}
+             input(N_i, C_j, stride[0] \times h + m, stride[1] \times w + n)\f$
+ * @param[in] ctx 上下文环境
+ * @param input 输入张量
+ * @param kernel_size 池化区域大小
+ * @param stride 池化操作步长
+ * @param padding 对输入张量 input 四周进行隐式零填充
+ * @param ceil_mode 当为 ``True`` 时，将在公式中使用 ceil 而不是 floor 来计算输出形状
+ * @param count_include_pad 当为 ``True`` 时，将在均值计算中包含零填充
+ * @param divisor_override 若为非空指针，其指向值将用作在计算平均池化时的除数，否则默认除以池化区元素总数
+ * @param[out] out 结果张量
  */
 DIOPI_API diopiError_t diopiAvgPool2d(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
                                       diopiSize_t kernel_size, diopiSize_t stride, diopiSize_t padding, bool ceil_mode,
                                       bool count_include_pad, const int64_t* divisor_override);
+/**
+ * @brief 计算输入张量 `input` 的 2D 平均池化操作反向传播
+ * @param[in] grad_output 反向传播时下层节点传回的梯度
+ * @param[out] grad_input 输入张量的梯度
+ * @sa 其他参数释义参考 diopiAvgPool2d()
+ */
 DIOPI_API diopiError_t diopiAvgPool2dBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input,
                                               diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t input,
                                               diopiSize_t kernel_size, diopiSize_t stride, diopiSize_t padding, bool ceil_mode,
@@ -780,7 +961,15 @@ DIOPI_API diopiError_t diopiGroupNormBackward(diopiContextHandle_t ctx, diopiTen
                                               diopiConstTensorHandle_t rstd, int64_t num_groups);
 
 /**
- * \brief Returns the unique elements of the input tensor.
+ * @brief 去除输入张量 input 中重复值，并返回该新张量
+ * @param[in] ctx 上下文环境
+ * @param input 输入张量
+ * @param dim 指定实施去重的维度，可为空指针，当为空指针时对整个输入张量去重
+ * @param sorted 是否对结果进行升序排序
+ * @param return_counts 是否返回计数张量，其中计数张量形状与输出张量或者输入张量在维度 ``dim`` 的大小相同，表示输出张量中元素的计数个数
+ * @param[out] out 结果张量，由于无法直接得出其形状大小，所以二级指针类型。其存储空间在结果返回时创建
+ * @param indices 计数张量，当参数 ``return_counts`` 为True时，计算并返回
+ * @param counts  索引张量，由于无法预先直接得出其形状大小，所以为二级指针类型。当为空时，表示无需计算返回，当不为空时，其存储空间在结果返回时创建并赋值
  */
 DIOPI_API diopiError_t diopiUnique(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t input, int64_t* dim,
                                    bool sorted, bool return_counts, diopiTensorHandle_t indices, diopiTensorHandle_t* counts);
