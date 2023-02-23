@@ -909,17 +909,6 @@ DIOPI_API diopiError_t diopiAssignScoreWithkBackward(diopiContextHandle_t ctx, d
 /**
  * \brief
  */
-DIOPI_API diopiError_t diopiActiveRotatedFilter(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t indices, diopiTensorHandle_t output);
-
-/**
- * \brief
- */
-DIOPI_API diopiError_t diopiActiveRotatedFilterBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t indices, diopiTensorHandle_t grad_in);
-
-
-/**
- * \brief
- */
 DIOPI_API diopiError_t diopiBallQuery(diopiContextHandle_t ctx, diopiConstTensorHandle_t new_xyz, diopiConstTensorHandle_t xyz, diopiTensorHandle_t idx, int64_t b, int64_t n, int64_t m,
                                       float min_radius, float max_radius, int64_t nsample);
 
@@ -1108,6 +1097,66 @@ DIOPI_API diopiError_t diopiFurthestPointSamplingWithDist(diopiContextHandle_t c
 /**
  * \brief
  */
+DIOPI_API diopiError_t diopiFusedBiasLeakyrelu(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t input,
+                                               diopiConstTensorHandle_t bias, diopiConstTensorHandle_t refer, int64_t act, int64_t grad, float alpha, float scale);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiGatherPoints(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiConstTensorHandle_t idx, diopiTensorHandle_t out,
+                                                  int64_t b, int64_t c, int64_t n, int64_t npoints);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiGatherPointsBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t idx, diopiTensorHandle_t grad_points,
+                                                   int64_t b, int64_t c, int64_t n, int64_t npoints);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiGroupPoints(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiConstTensorHandle_t idx, diopiTensorHandle_t out,
+                                                 int64_t b, int64_t c, int64_t n, int64_t npoints, int64_t nsample);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiGroupPointsBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t idx, diopiTensorHandle_t grad_points,
+                                                  int64_t b, int64_t c, int64_t n, int64_t npoints, int64_t nsample);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiStackGroupPoints(diopiContextHandle_t ctx,
+                                     diopiConstTensorHandle_t features_tensor,
+                                     diopiConstTensorHandle_t features_batch_cnt_tensor,
+                                     diopiConstTensorHandle_t idx_tensor,
+                                     diopiConstTensorHandle_t idx_batch_cnt_tensor,
+                                     diopiTensorHandle_t out_tensor,
+                                     int64_t b, int64_t c, int64_t m, int64_t nsample);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiStackGroupPointsBackward(diopiContextHandle_t ctx,
+                                      diopiConstTensorHandle_t grad_out_tensor,
+                                      diopiConstTensorHandle_t idx_tensor,
+                                      diopiConstTensorHandle_t idx_batch_cnt_tensor,
+                                      diopiConstTensorHandle_t features_batch_cnt_tensor,
+                                      diopiTensorHandle_t grad_features_tensor,
+                                      int64_t b, int64_t c, int64_t m, int64_t n, int64_t nsample);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiIou3dBoxesOverlapBev(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes_a, diopiConstTensorHandle_t boxes_b,
+                                                            diopiTensorHandle_t ans_overlap,int64_t num_a, int64_t num_b);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiIou3dNms3d(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes, diopiTensorHandle_t keep, diopiTensorHandle_t keep_num, float nms_overlap_thresh);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiIou3dNms3dNormal(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes, diopiTensorHandle_t keep, diopiTensorHandle_t keep_num, float nms_overlap_thresh);
+
+/**
+ * \brief
+ */
 DIOPI_API diopiError_t diopiKnn(diopiContextHandle_t ctx, diopiTensorHandle_t xyz_tensor, diopiTensorHandle_t new_xyz_tensor, diopiTensorHandle_t idx_tensor,
                  diopiTensorHandle_t dist2_tensor, int64_t b, int64_t n, int64_t m, int64_t nsample);
 
@@ -1121,6 +1170,16 @@ DIOPI_API diopiError_t diopiNmsMmcv(diopiContextHandle_t ctx, diopiTensorHandle_
  * \brief
  */
 DIOPI_API diopiError_t diopiMinAreaPolygons(diopiContextHandle_t ctx, diopiConstTensorHandle_t pointsets, diopiTensorHandle_t polygons);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiActiveRotatedFilter(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t indices, diopiTensorHandle_t output);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiActiveRotatedFilterBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t indices, diopiTensorHandle_t grad_in);
 
 /**
  * \brief
