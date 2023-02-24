@@ -1163,6 +1163,108 @@ DIOPI_API diopiError_t diopiKnn(diopiContextHandle_t ctx, diopiTensorHandle_t xy
 /**
  * \brief
  */
+DIOPI_API diopiError_t diopiMaskedIm2col(diopiContextHandle_t ctx, diopiConstTensorHandle_t im, diopiConstTensorHandle_t mask_h_idx,
+                                diopiConstTensorHandle_t mask_w_idx, diopiTensorHandle_t col,
+                                int64_t kernel_h, int64_t kernel_w,
+                                int64_t pad_h, int64_t pad_w);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiMaskedCol2im(diopiContextHandle_t ctx, diopiConstTensorHandle_t col, diopiConstTensorHandle_t mask_h_idx,
+                                diopiConstTensorHandle_t mask_w_idx, diopiTensorHandle_t im, int64_t height,
+                                int64_t width, int64_t channels);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiModulatedDeformableIm2col(
+    diopiContextHandle_t ctx, diopiConstTensorHandle_t data_im, diopiConstTensorHandle_t data_offset, diopiConstTensorHandle_t data_mask,
+    int64_t batch_size, int64_t channels, int64_t height_im,
+    int64_t width_im, int64_t height_col, int64_t width_col,
+    int64_t kernel_h, int64_t kernel_w, int64_t pad_h, int64_t pad_w,
+    int64_t stride_h, int64_t stride_w, int64_t dilation_h,
+    int64_t dilation_w, int64_t deformable_group, diopiTensorHandle_t data_col);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiModulatedDeformableCol2im(
+    diopiContextHandle_t ctx, diopiConstTensorHandle_t data_col, diopiConstTensorHandle_t data_offset, diopiConstTensorHandle_t data_mask,
+    int64_t batch_size, int64_t channels, int64_t height_im,
+    int64_t width_im, int64_t height_col, int64_t width_col,
+    int64_t kernel_h, int64_t kernel_w, int64_t pad_h, int64_t pad_w,
+    int64_t stride_h, int64_t stride_w, int64_t dilation_h,
+    int64_t dilation_w, int64_t deformable_group, diopiTensorHandle_t grad_im);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiModulatedDeformableCol2imCoord(
+    diopiContextHandle_t ctx, diopiConstTensorHandle_t data_col, diopiConstTensorHandle_t data_im, diopiConstTensorHandle_t data_offset,
+    diopiConstTensorHandle_t data_mask, int64_t batch_size, int64_t channels,
+    int64_t height_im, int64_t width_im, int64_t height_col,
+    int64_t width_col, int64_t kernel_h, int64_t kernel_w,
+    int64_t pad_h, int64_t pad_w, int64_t stride_h, int64_t stride_w,
+    int64_t dilation_h, int64_t dilation_w, int64_t deformable_group,
+    diopiTensorHandle_t grad_offset, diopiTensorHandle_t grad_mask);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiModulatedDeformableIm2col(
+    diopiContextHandle_t ctx, diopiConstTensorHandle_t data_im, diopiConstTensorHandle_t data_offset, diopiConstTensorHandle_t data_mask,
+    int64_t batch_size, int64_t channels, int64_t height_im,
+    int64_t width_im, int64_t height_col, int64_t width_col,
+    int64_t kernel_h, int64_t kernel_w, int64_t pad_h, int64_t pad_w,
+    int64_t stride_h, int64_t stride_w, int64_t dilation_h,
+    int64_t dilation_w, int64_t deformable_group, diopiTensorHandle_t data_col);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiModulatedDeformableCol2im(
+    diopiContextHandle_t ctx, diopiConstTensorHandle_t data_col, diopiConstTensorHandle_t data_offset, diopiConstTensorHandle_t data_mask,
+    int64_t batch_size, int64_t channels, int64_t height_im,
+    int64_t width_im, int64_t height_col, int64_t width_col,
+    int64_t kernel_h, int64_t kernel_w, int64_t pad_h, int64_t pad_w,
+    int64_t stride_h, int64_t stride_w, int64_t dilation_h,
+    int64_t dilation_w, int64_t deformable_group, diopiTensorHandle_t grad_im);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiModulatedDeformableCol2imCoord(
+    diopiContextHandle_t ctx, diopiConstTensorHandle_t data_col, diopiConstTensorHandle_t data_im, diopiConstTensorHandle_t data_offset,
+    diopiConstTensorHandle_t data_mask, int64_t batch_size, int64_t channels,
+    int64_t height_im, int64_t width_im, int64_t height_col,
+    int64_t width_col, int64_t kernel_h, int64_t kernel_w,
+    int64_t pad_h, int64_t pad_w, int64_t stride_h, int64_t stride_w,
+    int64_t dilation_h, int64_t dilation_w, int64_t deformable_group,
+    diopiTensorHandle_t grad_offset, diopiTensorHandle_t grad_mask);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiMsDeformAttn(diopiContextHandle_t ctx, diopiTensorHandle_t* out,
+                                   diopiConstTensorHandle_t value,
+                                   diopiConstTensorHandle_t spatial_shapes,
+                                   diopiConstTensorHandle_t level_start_index,
+                                   diopiConstTensorHandle_t sampling_loc,
+                                   diopiConstTensorHandle_t attn_weight,
+                                   int64_t im2col_step);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiMsDeformAttnBackward(
+    diopiContextHandle_t ctx, diopiConstTensorHandle_t value, diopiConstTensorHandle_t spatial_shapes,
+    diopiConstTensorHandle_t level_start_index, diopiConstTensorHandle_t sampling_loc,
+    diopiConstTensorHandle_t attn_weight, diopiConstTensorHandle_t grad_output, diopiTensorHandle_t grad_value,
+    diopiTensorHandle_t grad_sampling_loc, diopiTensorHandle_t grad_attn_weight, int64_t im2col_step);
+
+/**
+ * \brief
+ */
 DIOPI_API diopiError_t diopiNmsMmcv(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t dets,
                                     diopiConstTensorHandle_t scores, double iou_threshold, int64_t offset);
 
