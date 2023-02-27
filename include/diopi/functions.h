@@ -1271,6 +1271,13 @@ DIOPI_API diopiError_t diopiNmsMmcv(diopiContextHandle_t ctx, diopiTensorHandle_
 /**
  * \brief
  */
+DIOPI_API diopiError_t diopiNmsRotated(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t dets,
+                                    diopiConstTensorHandle_t scores, diopiConstTensorHandle_t order_t, diopiConstTensorHandle_t dets_sorted,
+                                    double iou_threshold, int64_t multi_label);
+
+/**
+ * \brief
+ */
 DIOPI_API diopiError_t diopiPointsInBoxesPart(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes, diopiConstTensorHandle_t pts, diopiTensorHandle_t box_idx_of_points,
                                                     int64_t batch_size, int64_t boxes_num, int64_t pts_num);
 
