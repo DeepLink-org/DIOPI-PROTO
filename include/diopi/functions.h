@@ -1271,6 +1271,130 @@ DIOPI_API diopiError_t diopiNmsMmcv(diopiContextHandle_t ctx, diopiTensorHandle_
 /**
  * \brief
  */
+DIOPI_API diopiError_t diopiPointsInBoxesPart(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes, diopiConstTensorHandle_t pts, diopiTensorHandle_t box_idx_of_points,
+                                                    int64_t batch_size, int64_t boxes_num, int64_t pts_num);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiPointsInBoxesAll(diopiContextHandle_t ctx, int64_t batch_size, int64_t boxes_num,
+                                      int64_t pts_num, diopiConstTensorHandle_t boxes,
+                                      diopiConstTensorHandle_t pts,
+                                      diopiTensorHandle_t box_idx_of_points);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiPsamask(diopiContextHandle_t ctx, int64_t psa_type, diopiConstTensorHandle_t input, diopiTensorHandle_t output,
+                          int64_t num_, int64_t h_feature,
+                          int64_t w_feature, int64_t h_mask,
+                          int64_t w_mask, int64_t half_h_mask,
+                          int64_t half_w_mask);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiPsamaskBackward(diopiContextHandle_t ctx, int64_t psa_type, diopiConstTensorHandle_t grad_output,
+                           diopiTensorHandle_t grad_input, int64_t num_,
+                           int64_t h_feature, int64_t w_feature,
+                           int64_t h_mask, int64_t w_mask,
+                           int64_t half_h_mask, int64_t half_w_mask);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiRoiAlignMmcv(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t rois, diopiTensorHandle_t output,
+                            diopiTensorHandle_t argmax_y, diopiTensorHandle_t argmax_x,
+                            int64_t aligned_height, int64_t aligned_width,
+                            float spatial_scale, int64_t sampling_ratio,
+                            int64_t pool_mode, bool aligned);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiRoiAlignBackwardMmcv(diopiContextHandle_t ctx, diopiTensorHandle_t grad_output, diopiTensorHandle_t rois, diopiTensorHandle_t argmax_y,
+                             diopiTensorHandle_t argmax_x, diopiTensorHandle_t grad_input,
+                             int64_t aligned_height, int64_t aligned_width,
+                             float spatial_scale, int64_t sampling_ratio,
+                             int64_t pool_mode, bool aligned);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiRoiAlignRotated(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t rois, diopiTensorHandle_t output,
+                                    int64_t aligned_height, int64_t aligned_width,
+                                    float spatial_scale, int64_t sampling_ratio,
+                                    bool aligned, bool clockwise);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiRoiAlignRotatedBackward(diopiContextHandle_t ctx, diopiTensorHandle_t top_grad, diopiTensorHandle_t rois,
+                                     diopiTensorHandle_t bottom_grad, int64_t aligned_height,
+                                     int64_t aligned_width, float spatial_scale,
+                                     int64_t sampling_ratio, bool aligned,
+                                     bool clockwise);
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiRiroiAlignRotated(diopiContextHandle_t ctx, diopiTensorHandle_t features, diopiTensorHandle_t rois,
+                                      diopiTensorHandle_t output, int64_t pooled_height,
+                                      int64_t pooled_width, float spatial_scale,
+                                      int64_t num_samples, int64_t num_orientations,
+                                      bool clockwise);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiRiroiAlignRotatedBackward(diopiContextHandle_t ctx, diopiTensorHandle_t top_grad, diopiTensorHandle_t rois,
+                                       diopiTensorHandle_t bottom_grad, int64_t pooled_height,
+                                       int64_t pooled_width, float spatial_scale,
+                                       int64_t num_samples, int64_t num_orientations,
+                                       bool clockwise);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiRoiawarePool3d(diopiContextHandle_t ctx, int64_t boxes_num, int64_t pts_num, int64_t channels,
+                                  int64_t max_pts_each_voxel, int64_t out_x, int64_t out_y,
+                                  int64_t out_z, diopiConstTensorHandle_t rois,
+                                  diopiConstTensorHandle_t pts, diopiConstTensorHandle_t pts_feature,
+                                  diopiTensorHandle_t argmax, diopiTensorHandle_t pts_idx_of_voxels,
+                                  diopiTensorHandle_t pooled_features, int64_t pool_method);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiRoiawarePool3dBackward(diopiContextHandle_t ctx, int64_t boxes_num, int64_t out_x, int64_t out_y,
+                                   int64_t out_z, int64_t channels,
+                                   int64_t max_pts_each_voxel,
+                                   diopiConstTensorHandle_t pts_idx_of_voxels,
+                                   diopiConstTensorHandle_t argmax, diopiConstTensorHandle_t grad_out,
+                                   diopiTensorHandle_t grad_in, int64_t pool_method);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiRoipointPool3d(diopiContextHandle_t ctx, int64_t batch_size, int64_t pts_num, int64_t boxes_num,
+                                  int64_t feature_in_len, int64_t sampled_pts_num,
+                                  diopiConstTensorHandle_t xyz, diopiConstTensorHandle_t boxes3d,
+                                  diopiConstTensorHandle_t pts_feature,
+                                  diopiTensorHandle_t pooled_features,
+                                  diopiTensorHandle_t pooled_empty_flag);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiRoiPool(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t rois, diopiTensorHandle_t output,
+                           diopiTensorHandle_t argmax, int64_t pooled_height, int64_t pooled_width,
+                           float spatial_scale);
+
+/**
+ * \brief
+ */
+DIOPI_API diopiError_t diopiRoiPoolBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_output, diopiTensorHandle_t rois, diopiTensorHandle_t argmax,
+                            diopiTensorHandle_t grad_input, int64_t pooled_height,
+                            int64_t pooled_width, float spatial_scale);
+
+/**
+ * \brief
+ */
 DIOPI_API diopiError_t diopiMinAreaPolygons(diopiContextHandle_t ctx, diopiConstTensorHandle_t pointsets, diopiTensorHandle_t polygons);
 
 /**
