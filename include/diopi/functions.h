@@ -1612,7 +1612,7 @@ DIOPI_API diopiError_t diopiDiffIouRotatedSortVertices(diopiContextHandle_t ctx,
  * \brief
  */
 DIOPI_API diopiError_t diopiChamferDistance(diopiContextHandle_t ctx, diopiConstTensorHandle_t xyz1, diopiConstTensorHandle_t xyz2,
-                                            diopiTensorHandle_t dist1, diopiTensorHandle_t dist2, diopiTensorHandle_t idx1, diopiTensorHandle_t idx2);
+                                            diopiConstTensorHandle_t dist1, diopiConstTensorHandle_t dist2, diopiConstTensorHandle_t idx1, diopiConstTensorHandle_t idx2);
 
 /**
  * \brief
