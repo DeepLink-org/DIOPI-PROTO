@@ -1161,30 +1161,23 @@ DIOPI_API diopiError_t diopiNmsRotated(diopiContextHandle_t ctx, diopiTensorHand
                                     double iou_threshold, int64_t multi_label);
 
 /**
- * \brief
+ * \brief Find the box in which each point is
  */
 DIOPI_API diopiError_t diopiPointsInBoxesPart(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes, diopiConstTensorHandle_t pts, diopiTensorHandle_t box_idx_of_points,
                                                     int64_t batch_size, int64_t boxes_num, int64_t pts_num);
-
-/**
- * \brief
- */
 DIOPI_API diopiError_t diopiPointsInBoxesAll(diopiContextHandle_t ctx, int64_t batch_size, int64_t boxes_num,
                                       int64_t pts_num, diopiConstTensorHandle_t boxes,
                                       diopiConstTensorHandle_t pts,
                                       diopiTensorHandle_t box_idx_of_points);
 
 /**
- * \brief
+ * \brief Psamask. Modified from https://github.com/hszhao/semseg/blob/master/lib/psa
  */
 DIOPI_API diopiError_t diopiPsamask(diopiContextHandle_t ctx, int64_t psa_type, diopiConstTensorHandle_t input, diopiTensorHandle_t output,
                           int64_t num_, int64_t h_feature,
                           int64_t w_feature, int64_t h_mask,
                           int64_t w_mask, int64_t half_h_mask,
                           int64_t half_w_mask);
-/**
- * \brief
- */
 DIOPI_API diopiError_t diopiPsamaskBackward(diopiContextHandle_t ctx, int64_t psa_type, diopiConstTensorHandle_t grad_output,
                            diopiTensorHandle_t grad_input, int64_t num_,
                            int64_t h_feature, int64_t w_feature,
