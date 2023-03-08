@@ -943,17 +943,17 @@ DIOPI_API diopiError_t diopiBoxIouQuadri(diopiContextHandle_t ctx, diopiConstTen
 /**
  * \brief Content-Aware ReAssembly of FEatures
  */
-DIOPI_API diopiError_t diopiCARAFE(diopiContextHandle_t ctx, diopiConstTensorHandle_t features, diopiConstTensorHandle_t masks, diopiTensorHandle_t rfeatures,
+DIOPI_API diopiError_t diopiCarafe(diopiContextHandle_t ctx, diopiConstTensorHandle_t features, diopiConstTensorHandle_t masks, diopiTensorHandle_t rfeatures,
                                    diopiTensorHandle_t routput, diopiTensorHandle_t rmasks, diopiTensorHandle_t output, int64_t kernel_size, int64_t group_size, int64_t scale_factor);
-DIOPI_API diopiError_t diopiCARAFEBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t top_grad, diopiConstTensorHandle_t rfeatures, diopiConstTensorHandle_t masks,
+DIOPI_API diopiError_t diopiCarafeBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t top_grad, diopiConstTensorHandle_t rfeatures, diopiConstTensorHandle_t masks,
                                            diopiTensorHandle_t rtop_grad, diopiTensorHandle_t rbottom_grad_hs, diopiTensorHandle_t rbottom_grad, diopiTensorHandle_t rmask_grad,
                                            diopiTensorHandle_t bottom_grad, diopiTensorHandle_t mask_grad, int64_t kernel_size, int64_t group_size, int64_t scale_factor);
-DIOPI_API diopiError_t diopiCARAFENAIVE(diopiContextHandle_t ctx, diopiConstTensorHandle_t features,
+DIOPI_API diopiError_t diopiCarafeNaive(diopiContextHandle_t ctx, diopiConstTensorHandle_t features,
                                         diopiConstTensorHandle_t masks, diopiTensorHandle_t output,
                                         int64_t kernel_size,
                                         int64_t group_size,
                                         int64_t scale_factor);
-DIOPI_API diopiError_t diopiCARAFENAIVEBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t top_grad, diopiConstTensorHandle_t features, diopiConstTensorHandle_t masks,
+DIOPI_API diopiError_t diopiCarafeNaiveBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t top_grad, diopiConstTensorHandle_t features, diopiConstTensorHandle_t masks,
                                         diopiTensorHandle_t bottom_grad, diopiTensorHandle_t mask_grad, int64_t kernel_size, int64_t group_size, int64_t scale_factor);
 
 
