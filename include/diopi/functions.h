@@ -886,6 +886,12 @@ DIOPI_API diopiError_t diopiCol2Im(diopiContextHandle_t ctx, diopiTensorHandle_t
                                    diopiSize_t output_size, diopiSize_t kernel_size, diopiSize_t dilation, diopiSize_t padding, diopiSize_t stride);
 
 
+
+
+
+
+
+
 /* DIOPI functions from MMCV extension ops <https://github.com/open-mmlab/mmcv.git>*/
 
 /**
@@ -967,25 +973,28 @@ DIOPI_API diopiError_t diopiCorrelationBackward(diopiContextHandle_t ctx, diopiT
 /**
  * \brief Deformable 2D convolution.
  */
-DIOPI_API diopiError_t diopiDeformableIm2col(diopiContextHandle_t ctx, diopiTensorHandle_t data_im, diopiTensorHandle_t data_offset, diopiTensorHandle_t data_col,
-                            int64_t channels, int64_t height,
-                            int64_t width, int64_t ksize_h,
-                            int64_t ksize_w, int64_t pad_h, int64_t pad_w,
-                            int64_t stride_h, int64_t stride_w,
-                            int64_t dilation_h, int64_t dilation_w,
-                            int64_t parallel_imgs, int64_t deformable_group);
-DIOPI_API diopiError_t diopiDeformableCol2im(diopiContextHandle_t ctx, diopiTensorHandle_t data_col, diopiTensorHandle_t data_offset, diopiTensorHandle_t grad_im,
-                            int64_t channels, int64_t height,
-                            int64_t width, int64_t ksize_h,
-                            int64_t ksize_w, int64_t pad_h, int64_t pad_w,
-                            int64_t stride_h, int64_t stride_w,
-                            int64_t dilation_h, int64_t dilation_w,
-                            int64_t parallel_imgs, int64_t deformable_group);
-DIOPI_API diopiError_t diopiDeformableCol2imCoord(diopiContextHandle_t ctx, diopiTensorHandle_t data_col, diopiTensorHandle_t data_im, diopiTensorHandle_t data_offset, int64_t channels, diopiTensorHandle_t grad_offset,
-                                            int64_t height, int64_t width, int64_t ksize_h, int64_t ksize_w,
-                                            int64_t pad_h, int64_t pad_w, int64_t stride_h, int64_t stride_w,
-                                            int64_t dilation_h, int64_t dilation_w, int64_t parallel_imgs,
-                                            int64_t deformable_group);
+DIOPI_API diopiError_t diopiDeformConv(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t weight, diopiTensorHandle_t offset,
+                         diopiTensorHandle_t output, diopiTensorHandle_t columns, diopiTensorHandle_t ones, int64_t kW,
+                         int64_t kH, int64_t dW, int64_t dH, int64_t padW, int64_t padH,
+                         int64_t dilationW, int64_t dilationH, int64_t group,
+                         int64_t deformable_group, int64_t im2col_step);
+DIOPI_API diopiError_t diopiDeformConvBackwardInput(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t offset, diopiTensorHandle_t gradOutput,
+                                diopiTensorHandle_t gradInput, diopiTensorHandle_t gradOffset,
+                                diopiTensorHandle_t weight, diopiTensorHandle_t columns, int64_t kW, int64_t kH,
+                                int64_t dW, int64_t dH, int64_t padW, int64_t padH,
+                                int64_t dilationW, int64_t dilationH, int64_t group,
+                                int64_t deformable_group, int64_t im2col_step);
+DIOPI_API diopiError_t diopiDeformConvBackwardParameters(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t offset,
+                                     diopiTensorHandle_t gradOutput, diopiTensorHandle_t gradWeight,
+                                     diopiTensorHandle_t columns, diopiTensorHandle_t ones, int64_t kW,
+                                     int64_t kH, int64_t dW, int64_t dH, int64_t padW, int64_t padH,
+                                     int64_t dilationW, int64_t dilationH, int64_t group,
+                                     int64_t deformable_group, float scale,
+                                     int64_t im2col_step);
+
+/**
+ * \brief Deformable RoiPool
+ */
 DIOPI_API diopiError_t diopiDeformRoiPool(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t rois, diopiTensorHandle_t offset,
                                   diopiTensorHandle_t output, int64_t pooled_height,
                                   int64_t pooled_width, float spatial_scale,
@@ -1108,28 +1117,19 @@ DIOPI_API diopiError_t diopiMaskedCol2im(diopiContextHandle_t ctx, diopiConstTen
 /**
  * \brief A ModulatedDeformable Conv Encapsulation that acts as normal Conv layers.
  */
-DIOPI_API diopiError_t diopiModulatedDeformableIm2col(
-    diopiContextHandle_t ctx, diopiConstTensorHandle_t data_im, diopiConstTensorHandle_t data_offset, diopiConstTensorHandle_t data_mask,
-    int64_t batch_size, int64_t channels, int64_t height_im,
-    int64_t width_im, int64_t height_col, int64_t width_col,
-    int64_t kernel_h, int64_t kernel_w, int64_t pad_h, int64_t pad_w,
-    int64_t stride_h, int64_t stride_w, int64_t dilation_h,
-    int64_t dilation_w, int64_t deformable_group, diopiTensorHandle_t data_col);
-DIOPI_API diopiError_t diopiModulatedDeformableCol2im(
-    diopiContextHandle_t ctx, diopiConstTensorHandle_t data_col, diopiConstTensorHandle_t data_offset, diopiConstTensorHandle_t data_mask,
-    int64_t batch_size, int64_t channels, int64_t height_im,
-    int64_t width_im, int64_t height_col, int64_t width_col,
-    int64_t kernel_h, int64_t kernel_w, int64_t pad_h, int64_t pad_w,
-    int64_t stride_h, int64_t stride_w, int64_t dilation_h,
-    int64_t dilation_w, int64_t deformable_group, diopiTensorHandle_t grad_im);
-DIOPI_API diopiError_t diopiModulatedDeformableCol2imCoord(
-    diopiContextHandle_t ctx, diopiConstTensorHandle_t data_col, diopiConstTensorHandle_t data_im, diopiConstTensorHandle_t data_offset,
-    diopiConstTensorHandle_t data_mask, int64_t batch_size, int64_t channels,
-    int64_t height_im, int64_t width_im, int64_t height_col,
-    int64_t width_col, int64_t kernel_h, int64_t kernel_w,
-    int64_t pad_h, int64_t pad_w, int64_t stride_h, int64_t stride_w,
-    int64_t dilation_h, int64_t dilation_w, int64_t deformable_group,
-    diopiTensorHandle_t grad_offset, diopiTensorHandle_t grad_mask);
+DIOPI_API diopiError_t diopiModulatedDeformConv(
+    diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t weight, diopiTensorHandle_t bias, diopiTensorHandle_t ones, diopiTensorHandle_t offset,
+    diopiTensorHandle_t mask, diopiTensorHandle_t output, diopiTensorHandle_t columns, int64_t kernel_h, int64_t kernel_w,
+    const int64_t stride_h, const int64_t stride_w, const int64_t pad_h, const int64_t pad_w,
+    const int64_t dilation_h, const int64_t dilation_w, const int64_t group,
+    const int64_t deformable_group, const bool with_bias);
+DIOPI_API diopiError_t diopiModulatedDeformConvBackward(
+    diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t weight, diopiTensorHandle_t bias, diopiTensorHandle_t ones, diopiTensorHandle_t offset,
+    diopiTensorHandle_t mask, diopiTensorHandle_t columns, diopiTensorHandle_t grad_input, diopiTensorHandle_t grad_weight,
+    diopiTensorHandle_t grad_bias, diopiTensorHandle_t grad_offset, diopiTensorHandle_t grad_mask, diopiTensorHandle_t grad_output,
+    int64_t kernel_h, int64_t kernel_w, int64_t stride_h, int64_t stride_w, int64_t pad_h,
+    int64_t pad_w, int64_t dilation_h, int64_t dilation_w, int64_t group, int64_t deformable_group,
+    const bool with_bias);
 
 /**
  * \brief An attention module used in Deformable-Detr.
@@ -1321,24 +1321,17 @@ DIOPI_API diopiError_t diopiUpfirdn2dOp(diopiContextHandle_t ctx, diopiTensorHan
 /**
  * \brief Convert kitti points(N, >=3) to voxels.
  */
-DIOPI_API diopiError_t diopiHardVoxelize(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiTensorHandle_t voxels,
-                               diopiTensorHandle_t coors,
-                               diopiTensorHandle_t num_points_per_voxel,
-                               float* voxel_size,
-                               float* coors_range,
-                               int64_t max_points, int64_t max_voxels,
-                               int64_t NDim, int64_t* out_voxel_num);
-DIOPI_API diopiError_t diopiDynamicVoxelize(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiTensorHandle_t coors,
-                                   float* voxel_size,
-                                   float* coors_range,
-                                   int64_t NDim);
-DIOPI_API diopiError_t diopiNondeterministicHardVoxelize(
-    diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiTensorHandle_t voxels, diopiTensorHandle_t coors,
-    diopiTensorHandle_t num_points_per_voxel, float* voxel_size,
-    float* coors_range, int64_t max_points,
-    int64_t max_voxels, int64_t NDim, int64_t* out_voxel_num);
-
-
+DIOPI_API diopiError_t diopiHardVoxelize(diopiConstTensorHandle_t points,
+                           diopiConstTensorHandle_t voxel_size,
+                           diopiConstTensorHandle_t coors_range, diopiTensorHandle_t voxels,
+                           diopiTensorHandle_t coors, diopiTensorHandle_t num_points_per_voxel,
+                           diopiTensorHandle_t voxel_num, const int64_t max_points,
+                           const int64_t max_voxels, const int64_t NDim,
+                           const bool deterministic);
+DIOPI_API diopiError_t diopiDynamicVoxelize(diopiConstTensorHandle_t points,
+                              diopiConstTensorHandle_t voxel_size,
+                              diopiConstTensorHandle_t coors_range, diopiTensorHandle_t coors,
+                              const int64_t NDim);
 
 /**
  * \brief Using the feature interpolation to obtain the position information
