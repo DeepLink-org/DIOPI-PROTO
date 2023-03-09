@@ -1435,8 +1435,8 @@ DIOPI_API diopiError_t diopiDiffIouRotatedSortVertices(diopiContextHandle_t ctx,
  * \brief This is an implementation of the 2D Chamfer Distance. It has been used in the paper `Oriented RepPoints for Aerial Object
  *        Detection (CVPR 2022) <https://arxiv.org/abs/2105.11111>_`.
  */
-DIOPI_API diopiError_t diopiChamferDistance(diopiContextHandle_t ctx, diopiConstTensorHandle_t xyz1, diopiConstTensorHandle_t xyz2,
-                                            diopiConstTensorHandle_t dist1, diopiConstTensorHandle_t dist2, diopiConstTensorHandle_t idx1, diopiConstTensorHandle_t idx2);
+DIOPI_API diopiError_t diopiChamferDistance(diopiContextHandle_t ctx, diopiConstTensorHandle_t xyz1_in, diopiConstTensorHandle_t xyz2_in, diopiTensorHandle_t dist1_out,
+                                            diopiTensorHandle_t dist2_out, diopiTensorHandle_t idx1_out, diopiTensorHandle_t idx2_out);
 DIOPI_API diopiError_t diopiChamferDistanceBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t xyz1, diopiConstTensorHandle_t xyz2,
                                             diopiConstTensorHandle_t idx1, diopiConstTensorHandle_t idx2, diopiConstTensorHandle_t grad_dist1, diopiConstTensorHandle_t grad_dist2,
                                             diopiTensorHandle_t grad_xyz1, diopiTensorHandle_t grad_xyz2);
