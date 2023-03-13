@@ -922,30 +922,36 @@ DIOPI_API diopiError_t diopiRepeat(diopiContextHandle_t ctx, diopiTensorHandle_t
 /* DIOPI functions from MMCV extension ops <https://github.com/open-mmlab/mmcv.git>*/
 
 /**
- * \brief Perform weighted sum to generate output features according to scores.
- * Args: 
-            scores : (B, npoint, K, M), predicted scores to
-                aggregate weight matrices in the weight bank.
-                ``npoint`` is the number of sampled centers.
-                ``K`` is the number of queried neighbors.
-                ``M`` is the number of weight matrices in the weight bank.
-            grad_scores: the gradient of ``scores``.
-            points: (B, N, M, out_dim)
-                Pre-computed point features to be aggregated.
-            grad_points: the gradient of ``points``.
-            centers: (B, N, M, out_dim)
-                Pre-computed center features to be aggregated.
-            knn_idx: (B, npoint, K), index of sampled kNN.
-                We assume the first idx in each row is the idx of the center.
-            aggregate (str, optional): Aggregation method.
-                Can be 'sum', 'avg' or 'max'. Defaults: 'sum'.
-            output: (B, out_dim, npoint, K), the aggregated features.
-            grad_out: the gradient of ``output``
+ * @brief Perform weighted sum to generate output features according to scores.
+ * @param[in] ctx diopi context.
+ * @param scores (B, npoint, K, M), predicted scores to
+          aggregate weight matrices in the weight bank.
+          ``npoint`` is the number of sampled centers.
+          ``K`` is the number of queried neighbors.
+          ``M`` is the number of weight matrices in the weight bank.
+ * @param points (B, N, M, out_dim)
+         Pre-computed point features to be aggregated.
+ * @param centers (B, N, M, out_dim)
+         Pre-computed center features to be aggregated.
+ * @param knn_idx (B, npoint, K), index of sampled kNN.
+         We assume the first idx in each row is the idx of the center.
+ * @param B,N,npoint,M,K,out_dim scores: (B, npoint, K, M); points: (B, N, M, out_dim)
+ * @param aggregate (str, optional): Aggregation method. Can be 'sum', 'avg' or 'max'. Defaults: 'sum'.
+ * @param[out] output (B, out_dim, npoint, K), the aggregated features.
  */
 DIOPI_API diopiError_t diopiAssignScoreWithk(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiConstTensorHandle_t centers,
                                 diopiConstTensorHandle_t scores, diopiConstTensorHandle_t knn_idx,
                                 diopiTensorHandle_t output, int64_t B, int64_t N, int64_t npoint, int64_t M,
                                 int64_t K, int64_t out_dim, int64_t aggregate);
+/**
+ * @brief Backward function for perform weighted sum to generate output features according to scores.
+ * @param[in] ctx diopi context.
+ * @param grad_out the gradient of ``output``
+ * @param[out] grad_points the gradient of ``points``.
+ * @param grad_scores the gradient of ``scores``.
+ * @param grad_centers the gradient of ``centers``
+ * @sa definition of other parameters, refer to diopiAssignScoreWithk()
+ */
 DIOPI_API diopiError_t diopiAssignScoreWithkBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t points,
                                  diopiConstTensorHandle_t centers, diopiConstTensorHandle_t scores,
                                  diopiConstTensorHandle_t knn_idx, diopiTensorHandle_t grad_points,
@@ -954,91 +960,107 @@ DIOPI_API diopiError_t diopiAssignScoreWithkBackward(diopiContextHandle_t ctx, d
                                  int64_t aggregate);
 
 /**
- * \brief Find nearby points in spherical space.
- * Args:
-            min_radius (float): minimum radius of the balls.
-            max_radius (float): maximum radius of the balls.
-            sample_num (int): maximum number of features in the balls.
-            xyz: (B, N, 3) xyz coordinates of the features,
-                or staked input (N1 + N2 ..., 3).
-            center_xyz: (B, npoint, 3) centers of the ball
-                query, or staked input (M1 + M2 ..., 3).
-            xyz_batch_cnt: (batch_size): Stacked input xyz coordinates nums in
-                each batch, just like (N1, N2, ...). Defaults to None.
-                New in version 1.7.0.
-            center_xyz_batch_cnt: (batch_size): Stacked centers coordinates
-                nums in each batch, just line (M1, M2, ...). Defaults to None.
-                New in version 1.7.0.
-            idx: (B, npoint, nsample) tensor with the indices of the
-            features that form the query balls.
+ * @brief Find nearby points in spherical space.
+ * @param[in] ctx diopi context.
+ * @param min_radius float: minimum radius of the balls.
+ * @param max_radius float: maximum radius of the balls.
+ * @param sample_num int: maximum number of features in the balls.
+ * @param xyz (B, N, 3) xyz coordinates of the features,
+                 or staked input (N1 + N2 ..., 3).
+ * @param center_xyz (B, npoint, 3) centers of the ball
+     query, or staked input (M1 + M2 ..., 3).
+ * @param B,N,npoint xyz (B, N, 3), center_xyz (B, npoint, 3)
+ * @param[out] idx (B, npoint, nsample) tensor with the indices of the
+     features that form the query balls.
  */
 DIOPI_API diopiError_t diopiBallQuery(diopiContextHandle_t ctx, diopiConstTensorHandle_t center_xyz, diopiConstTensorHandle_t xyz, diopiTensorHandle_t idx, int64_t B, int64_t N, int64_t npoint,
                                       float min_radius, float max_radius, int64_t sample_num);
+/**
+ * @brief Find nearby points in spherical space.(Stacked method)
+ * @param[in] ctx diopi context.
+ * @param xyz_batch_cnt (batch_size): Stacked input xyz coordinates nums in
+     each batch, just like (N1, N2, ...). Defaults to None.
+     New in version 1.7.0.
+ * @param center_xyz_batch_cnt (batch_size): Stacked centers coordinates
+     nums in each batch, just line (M1, M2, ...). Defaults to None.
+     New in version 1.7.0.
+ * @sa definition of other parameters, refer to diopiBallQuery()
+ */
 DIOPI_API diopiError_t diopiStackBallQuery(diopiContextHandle_t ctx, diopiConstTensorHandle_t center_xyz, diopiConstTensorHandle_t center_xyz_batch_cnt, diopiConstTensorHandle_t xyz,
                                            diopiConstTensorHandle_t xyz_batch_cnt, diopiTensorHandle_t idx, float max_radius, int64_t sample_num);
 
 /**
- * \brief Calculate overlap between two set of bboxes.
- * Args:
-        bboxes1 : shape (m, 4) in <x1, y1, x2, y2> format or
-            empty.
-        bboxes2 : shape (n, 4) in <x1, y1, x2, y2> format or
-            empty. If aligned is ``True``, then m and n must be equal.
-        mode (str): "iou" (intersection over union) or iof (intersection over
-            foreground).
-        offset: offset is 0 or 1.
-        ious: the ious betweens boxes. If ``aligned`` is
-        ``False``, the shape of ious is (m, n) else (m, 1).
+ * @brief Calculate overlap between two set of bboxes.
+ * @param[in] ctx diopi context.
+ * @param bboxes1 shape (m, 4) in <x1, y1, x2, y2> format or
+     empty.
+ * @param bboxes2 shape (n, 4) in <x1, y1, x2, y2> format or
+     empty. If aligned is ``True``, then m and n must be equal.
+ * @param mode (str): "iou" (intersection over union) or iof (intersection over
+     foreground).
+ * @param aligned bool, determine the way how ``ious`` is calculated.
+ * @param offset  offset is 0 or 1.
+ * @param[out] ious  the ious betweens boxes. If ``aligned`` is
+     ``False``, the shape of ious is (m, n) else (m, 1).
  */
 DIOPI_API diopiError_t diopiBboxOverlaps(diopiContextHandle_t ctx, diopiConstTensorHandle_t bboxes1, diopiConstTensorHandle_t bboxes2, diopiTensorHandle_t ious,
                         int64_t mode, bool aligned, int64_t offset);
 
 /**
- * \brief Border align pooling layer.
- * Args:
-            input: Features with shape [N,4C,H,W]. Channels ranged in [0,C),
-                [C,2C), [2C,3C), [3C,4C) represent the top, left, bottom,
-                right features respectively.
-            grad_input: the gradient of ``input``
-            boxes: Boxes with shape [N,H*W,4]. Coordinate format (x1,y1,x2,y2).
-            argmax_idx: `argmax_idx` only used for backward.
-            pool_size (int): number of positions sampled over the boxes' borders
-            (e.g. top, bottom, left, right).
-            output: Pooled features with shape [N,C,H*W,4]. The order is
-            (top,left,bottom,right) for the last dimension.
-            grad_output: the gradient of ``output``
+ * @brief Border align pooling layer.
+ * @param[in] ctx diopi context.
+ * @param input  Features with shape [N,4C,H,W]. Channels ranged in [0,C),
+     [C,2C), [2C,3C), [3C,4C) represent the top, left, bottom,
+     right features respectively.
+ * @param boxes  Boxes with shape [N,H*W,4]. Coordinate format (x1,y1,x2,y2).
+ * @param pool_size int: number of positions sampled over the boxes' borders
+         (e.g. top, bottom, left, right).
+ * @param[out] output  Pooled features with shape [N,C,H*W,4]. The order is
+         (top,left,bottom,right) for the last dimension.
+ * @param argmax_idx  `argmax_idx` only used for backward.
  */
 DIOPI_API diopiError_t diopiBorderAlign(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t boxes,
                                diopiTensorHandle_t output, diopiTensorHandle_t argmax_idx,
                                int64_t pool_size);
+/**
+ * @brief Backward function for border align pooling layer.
+ * @param[in] ctx diopi context.
+ * @param grad_output the gradient of ``output``
+ * @param[out] grad_input  the gradient of ``input``
+ * @sa definition of other parameters, refer to diopiBorderAlign()
+ */
 DIOPI_API diopiError_t diopiBorderAlignBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t boxes,
                                 diopiConstTensorHandle_t argmax_idx, diopiTensorHandle_t grad_input,
                                 int64_t pool_size);
 
 /**
- * \brief Return intersection-over-union (Jaccard index) of boxes.
- * Args:
-        bboxes1 : quadrilateral bboxes 1. It has shape (N, 8),
-            indicating (x1, y1, ..., x4, y4) for each row.
-        bboxes2 : quadrilateral bboxes 2. It has shape (M, 8),
-            indicating (x1, y1, ..., x4, y4) for each row.
-        mode (str): "iou" (intersection over union) or iof (intersection over
-            foreground).
-        aligned: If ``aligned`` is ``False``, then calculate the ious between each bbox
-            of bboxes1 and bboxes2, otherwise the ious between each aligned pair of
-            bboxes1 and bboxes2.
-        ious: the ious betweens boxes. If ``aligned`` is ``False``,
-            the shape of ious is (N, M) else (N,).
+ * @brief Return intersection-over-union (Jaccard index) of boxes(BoxIouRotated).
+ * @param[in] ctx diopi context.
+ * @param bboxes1   quadrilateral bboxes 1. It has shape (N, 8),
+     indicating (x1, y1, ..., x4, y4) for each row.
+ * @param bboxes2   quadrilateral bboxes 2. It has shape (M, 8),
+     indicating (x1, y1, ..., x4, y4) for each row.
+ * @param mode (str)  "iou" (intersection over union) or iof (intersection over
+     foreground).
+ * @param aligned  If ``aligned`` is ``False``, then calculate the ious between each bbox
+     of bboxes1 and bboxes2, otherwise the ious between each aligned pair of
+     bboxes1 and bboxes2.
+ * @param[out] ious  the ious betweens boxes. If ``aligned`` is ``False``,
+     the shape of ious is (N, M) else (N,).
  */
-DIOPI_API diopiError_t diopiBoxIouRotated(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes1, diopiConstTensorHandle_t boxes2, diopiTensorHandle_t ious,
+DIOPI_API diopiError_t diopiBoxIouRotated(diopiContextHandle_t ctx, diopiConstTensorHandle_t bboxes1, diopiConstTensorHandle_t bboxes2, diopiTensorHandle_t ious,
                                           int64_t mode, bool aligned);
-DIOPI_API diopiError_t diopiBoxIouQuadri(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes1, diopiConstTensorHandle_t boxes2, diopiTensorHandle_t ious,
+/**
+ * @brief Return intersection-over-union (Jaccard index) of boxes(BoxIouQuadri).
+ * @param[in] ctx diopi context.
+ * @sa definition of other parameters, refer to diopiBoxIouRotated()
+ */
+DIOPI_API diopiError_t diopiBoxIouQuadri(diopiContextHandle_t ctx, diopiConstTensorHandle_t bboxes1, diopiConstTensorHandle_t bboxes2, diopiTensorHandle_t ious,
                                          int64_t mode, bool aligned);
 
 /**
- * \brief Content-Aware ReAssembly of FEatures
- * Please refer to `CARAFE: Content-Aware ReAssembly of FEatures
-    <https://arxiv.org/abs/1905.02188>`_ for more details.
+ * @brief Content-Aware ReAssembly of FEatures. Please refer to `CARAFE: Content-Aware ReAssembly of FEatures
+    <https://arxiv.org/abs/1905.02188>`_ for more details. 
  */
 DIOPI_API diopiError_t diopiCarafe(diopiContextHandle_t ctx, diopiConstTensorHandle_t features, diopiConstTensorHandle_t masks, diopiTensorHandle_t rfeatures,
                                    diopiTensorHandle_t routput, diopiTensorHandle_t rmasks, diopiTensorHandle_t output, int64_t kernel_size, int64_t group_size, int64_t scale_factor);
@@ -1055,33 +1077,38 @@ DIOPI_API diopiError_t diopiCarafeNaiveBackward(diopiContextHandle_t ctx, diopiC
 
 
 /**
- * \brief This correlation operator works for optical flow correlation computation.
- * Args:
-        input1, input2: input tensor
-        grad_input1, grad_input2: the gradient of input tensors
-        output: correlation operator out tensor for input tensor
-        grad_output: the gradient of ``output`` 
-        kernel_size (int): The size of sliding window i.e. local neighborhood
-            representing the center points and involved in correlation
-            computation. Defaults to 1. kH, kW = _pair(kernel_size).
-        max_displacement (int): The radius for computing correlation volume,
-            but the actual working space can be dilated by dilation_patch.
-            Defaults to 1. patch_size = max_displacement * 2 + 1.
-            patchH, patchW = _pair(patch_size)
-        stride (int): The stride of the sliding blocks in the input spatial
-            dimensions. Defaults to 1.
-        padding (int): Zero padding added to all four sides of the input1.
-            Defaults to 0. padH, padW = _pair(padding).
-        dilation (int): The spacing of local neighborhood that will involved
-            in correlation. Defaults to 1. dilationH, dilationW = _pair(dilation).
-        dilation_patch (int): The spacing between position need to compute
-            correlation.  Defaults to 1. dilation_patchH, dilation_patchW =  _pair(
-            dilation_patch)
+ * @brief This correlation operator works for optical flow correlation computation.
+ * @param[in] ctx diopi context.
+ * @param input1, input2  input tensor
+ * @param kH, kW kernel_size int: The size of sliding window i.e. local neighborhood
+     representing the center points and involved in correlation
+     computation. Defaults to 1. kH, kW = _pair(kernel_size).
+ * @param patchH, patchW max_displacement int: The radius for computing correlation volume,
+     but the actual working space can be dilated by dilation_patch.
+     Defaults to 1. patch_size = max_displacement * 2 + 1.
+     patchH, patchW = _pair(patch_size)
+ * @param dH, dW stride int: The stride of the sliding blocks in the input spatial
+     dimensions. Defaults to 1. dH, dW = _pair(stride)
+ * @param padH, padW padding int: Zero padding added to all four sides of the input1.
+     Defaults to 0. padH, padW = _pair(padding).
+ * @param dilationH, dilationW dilation int: The spacing of local neighborhood that will involved
+     in correlation. Defaults to 1. dilationH, dilationW = _pair(dilation).
+ * @param dilation_patchH, dilation_patchW dilation_patch int: The spacing between position need to compute
+     correlation.  Defaults to 1. dilation_patchH, dilation_patchW =  _pair(
+     dilation_patch)
+ * @param[out] output  correlation operator out tensor for input tensor
  */
 DIOPI_API diopiError_t diopiCorrelation(diopiContextHandle_t ctx, diopiTensorHandle_t input1, diopiTensorHandle_t input2, diopiTensorHandle_t output, int64_t kH,
                          int64_t kW, int64_t patchH, int64_t patchW, int64_t padH, int64_t padW,
                          int64_t dilationH, int64_t dilationW, int64_t dilation_patchH,
                          int64_t dilation_patchW, int64_t dH, int64_t dW);
+/**
+ * @brief Backward function for the correlation operator works for optical flow correlation computation.
+ * @param[in] ctx diopi context.
+ * @param grad_output the gradient of ``output`` 
+ * @param[out] grad_input1, grad_input2  the gradient of input tensors
+ * @sa definition of other parameters, refer to diopiCorrelation()
+ */
 DIOPI_API diopiError_t diopiCorrelationBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_output, diopiTensorHandle_t input1, diopiTensorHandle_t input2,
                           diopiTensorHandle_t grad_input1, diopiTensorHandle_t grad_input2, int64_t kH,
                           int64_t kW, int64_t patchH, int64_t patchW, int64_t padH, int64_t padW,
@@ -1089,53 +1116,61 @@ DIOPI_API diopiError_t diopiCorrelationBackward(diopiContextHandle_t ctx, diopiT
                           int64_t dilation_patchW, int64_t dH, int64_t dW);
 
 /**
- * \brief Deformable 2D convolution.
- * Args:
-        input: Input feature, shape (B, C_in, H_in, W_in)
-        weight: weight tensor,
-        offset: Offset for deformable convolution, shape
-                (B, deform_groups*kernel_size[0]*kernel_size[1]*2,
-                H_out, W_out), H_out, W_out are equal to the output's.
-
-                An offset is like `[y0, x0, y1, x1, y2, x2, ..., y8, x8]`.
-                The spatial arrangement is like:
-
-                .. code:: text
-
-                    (x0, y0) (x1, y1) (x2, y2)
-                    (x3, y3) (x4, y4) (x5, y5)
-                    (x6, y6) (x7, y7) (x8, y8)
-        output, columns, ones: Output of the layer.
-        in_channels (int): Number of channels in the input image.
-        out_channels (int): Number of channels produced by the convolution.
-        kernel_size(int, tuple): Size of the convolving kernel.
-        kW=weight.size(3)
-        kH=weight.size(2),
-        stride(int, tuple): Stride of the convolution. Default: 1.
-            dW=ctx.stride[1], dH=ctx.stride[0]
-        padding (int or tuple): Zero-padding added to both sides of the input.
-            Default: 0. padW=ctx.padding[1], padH=ctx.padding[0],
-        dilation (int or tuple): Spacing between kernel elements. Default: 1.
-            dilationW=ctx.dilation[1], dilationH=ctx.dilation[0]
-        groups (int): Number of blocked connections from input.
-            channels to output channels. Default: 1.
-        deform_groups (int): Number of deformable group partitions.
-        im2col_step (int): Number of samples processed by im2col_cuda_kernel
-            per call. It will work when ``batch_size`` > ``im2col_step``, but
-            ``batch_size`` must be divisible by ``im2col_step``. Default: 32.
-            `New in version 1.3.17.`
+ * @brief Deformable 2D convolution.
+ * @param[in] ctx diopi context.
+ * @param input  Input feature, shape (B, C_in, H_in, W_in)
+ * @param weight  weight tensor,
+ * @param offset  Offset for deformable convolution, shape
+         (B, deform_groups*kernel_size[0]*kernel_size[1]*2,
+         H_out, W_out), H_out, W_out are equal to the output's.
+         kernel_size(int, tuple): Size of the convolving kernel.
+         An offset is like `[y0, x0, y1, x1, y2, x2, ..., y8, x8]`.
+         The spatial arrangement is like:
+         .. code:: text
+             (x0, y0) (x1, y1) (x2, y2)
+             (x3, y3) (x4, y4) (x5, y5)
+             (x6, y6) (x7, y7) (x8, y8)
+ * @param kH, kW kH=weight.size(2),kW=weight.size(3)
+ * @param dH, dW stride (int, tuple): Stride of the convolution. Default: 1.
+     dW=stride[1], dH=stride[0]
+ * @param padH, padW padding (int or tuple): Zero-padding added to both sides of the input.
+     Default: 0. padW=padding[1], padH=padding[0],
+ * @param dilationH,dilationW dilation (int or tuple): Spacing between kernel elements. Default: 1.
+     dilationW= dilation[1], dilationH= dilation[0]
+ * @param groups int: Number of blocked connections from input.
+     channels to output channels. Default: 1.
+ * @param deform_groups int: Number of deformable group partitions.
+ * @param im2col_step int: Number of samples processed by im2col_cuda_kernel
+     per call. It will work when ``batch_size`` > ``im2col_step``, but
+     ``batch_size`` must be divisible by ``im2col_step``. Default: 32.
+     `New in version 1.3.17.`
+ * @param[out] output, columns, ones  Output of the layer.
  */
 DIOPI_API diopiError_t diopiDeformConv(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t weight, diopiTensorHandle_t offset,
                          diopiTensorHandle_t output, diopiTensorHandle_t columns, diopiTensorHandle_t ones, int64_t kW,
                          int64_t kH, int64_t dW, int64_t dH, int64_t padW, int64_t padH,
                          int64_t dilationW, int64_t dilationH, int64_t groups,
                          int64_t deform_groups, int64_t im2col_step);
+/**
+ * @brief Backward function for Deformable 2D convolution(for input and offset).
+ * @param[in] ctx diopi context.
+ * @param gradOutput  the gradient of ``output``.
+ * @param[out] gradInput, gradOffset  the gradient of input tensors ``input`` and ``offset``
+ * @sa definition of other parameters, refer to diopiDeformConv()
+ */
 DIOPI_API diopiError_t diopiDeformConvBackwardInput(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t offset, diopiTensorHandle_t gradOutput,
                                 diopiTensorHandle_t gradInput, diopiTensorHandle_t gradOffset,
                                 diopiTensorHandle_t weight, diopiTensorHandle_t columns, int64_t kW, int64_t kH,
                                 int64_t dW, int64_t dH, int64_t padW, int64_t padH,
                                 int64_t dilationW, int64_t dilationH, int64_t groups,
                                 int64_t deform_groups, int64_t im2col_step);
+/**
+ * @brief Backward function for Deformable 2D convolution(for weight).
+ * @param[in] ctx diopi context.
+ * @param gradOutput  the gradient of ``output``.
+ * @param[out] gradWeight  the gradient of input tensors ``weight``
+ * @sa definition of other parameters, refer to diopiDeformConv()
+ */
 DIOPI_API diopiError_t diopiDeformConvBackwardParameters(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t offset,
                                      diopiTensorHandle_t gradOutput, diopiTensorHandle_t gradWeight,
                                      diopiTensorHandle_t columns, diopiTensorHandle_t ones, int64_t kW,
@@ -1145,7 +1180,7 @@ DIOPI_API diopiError_t diopiDeformConvBackwardParameters(diopiContextHandle_t ct
                                      int64_t im2col_step);
 
 /**
- * \brief Deformable RoiPool.
+ * @brief Deformable RoiPool.
  */
 DIOPI_API diopiError_t diopiDeformRoiPool(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t rois, diopiTensorHandle_t offset,
                                   diopiTensorHandle_t output, int64_t pooled_height,
@@ -1159,7 +1194,7 @@ DIOPI_API diopiError_t diopiDeformRoiPoolBackward(diopiContextHandle_t ctx, diop
                                    float gamma);
 
 /**
- * \brief SigmoidFocalLoss
+ * @brief SigmoidFocalLoss
  */
 DIOPI_API diopiError_t diopiSigmoidFocalLossMmcv(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t target,
                                             diopiTensorHandle_t weight, diopiTensorHandle_t output,
@@ -1172,7 +1207,7 @@ DIOPI_API diopiError_t diopiSigmoidFocalLossBackwardMmcv(diopiContextHandle_t ct
                                                     float alpha);
 
 /**
- * \brief SoftmaxFocalLoss
+ * @brief SoftmaxFocalLoss
  */
 DIOPI_API diopiError_t diopiSoftmaxFocalLoss(diopiContextHandle_t ctx, diopiTensorHandle_t softmax, diopiTensorHandle_t target,
                                             diopiTensorHandle_t weight, diopiTensorHandle_t output,
@@ -1185,82 +1220,111 @@ DIOPI_API diopiError_t diopiSoftmaxFocalLossBackward(diopiContextHandle_t ctx, d
                                                     float alpha);
 
 /**
- * \brief Uses iterative furthest point sampling to select a set of features whose corresponding points have the furthest distance.
- * Args:
-            points_xyz: (B, N, 3) where N > num_points.
-            temp: tmp tensor for calculations.
-            idx_tensor: (B, num_points) indices of the sampled points.
-            num_points (int): Number of points in the sampled set.
-            points_dist: (B, N, N) Distance between each point
-                pair.
-            num_points (int): Number of points in the sampled set.
+ * @brief Uses iterative furthest point sampling to select a set of features whose corresponding points have the furthest distance.
+ * @param[in] ctx diopi context.
+ * @param points_xyz  (B, N, 3) where N > num_points.
+ * @param num_points int: Number of points in the sampled set.
+ * @param points_dist  (B, N, N) Distance between each point pair.
+ * @param B, N points_xyz  (B, N, 3)
+ * @param num_points int: Number of points in the sampled set.
+ * @param[out] idx_tensor  (B, num_points) indices of the sampled points.
+ * @param temp_tensor tmp result tensor for calculations.
  */
 DIOPI_API diopiError_t diopiFurthestPointSampling(diopiContextHandle_t ctx, diopiTensorHandle_t points_xyz,
                                                 diopiTensorHandle_t temp_tensor, diopiTensorHandle_t idx_tensor,
                                                 int64_t B, int64_t N, int64_t num_points);
+/**
+ * @brief Uses iterative furthest point sampling to select a set of features whose corresponding points have the furthest distance(with dist version).
+ * @param[in] ctx diopi context.
+ * @param points_dist  (B, N, N) Distance between each point pair.
+ * @sa definition of other parameters, refer to diopiFurthestPointSampling()
+ */
 DIOPI_API diopiError_t diopiFurthestPointSamplingWithDist(diopiContextHandle_t ctx, diopiTensorHandle_t points_dist,
                                                         diopiTensorHandle_t temp_tensor,
                                                         diopiTensorHandle_t idx_tensor, int64_t B,
                                                         int64_t N, int64_t num_points);
 
 /**
- * \brief Calculate second order deviation.
- * Args:
- *      input: Input feature map.
-        bias (nn.Parameter): The bias from convolution operation.
-        refer: empty tensor for calculations.
-        negative_slope (float, optional): Same as nn.LeakyRelu.
-            Defaults to 0.2.
-        scale (float, optional): A scalar to adjust the variance of the feature
-            map. Defaults to 2**0.5.
-        num_channels (int): The channel number of the feature map.
-        act=3
-        grad=0
-        negative_slope (float, optional): Same as nn.LeakyRelu.
-            Defaults to 0.2.
-        alpha=negative_slope.
-        scale (float, optional): A scalar to adjust the variance of the feature
-            map. Defaults to 2**0.5.
-        out: Feature map after non-linear activation.
+ * @brief Calculate second order deviation.
+ * @param[in] ctx diopi context.
+ * @param input  Input feature map.
+ * @param bias (nn.Parameter): The bias from convolution operation.
+ * @param refer  empty tensor for calculations.
+ * @param scale (float, optional): A scalar to adjust the variance of the feature
+     map. Defaults to 2**0.5.
+ * @param act =3
+ * @param grad =0
+ * @param alpha negative_slope (float, optional): Same as nn.LeakyRelu.
+     Defaults to 0.2. alpha=negative_slope.
+ * @param[out] out: Feature map after non-linear activation.
  */
 DIOPI_API diopiError_t diopiFusedBiasLeakyrelu(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t input,
                                                diopiConstTensorHandle_t bias, diopiConstTensorHandle_t refer, int64_t act, int64_t grad, float alpha, float scale);
 
 /**
- * \brief Gather points with given index.
- * Args:
-            features : (B, C, N) features to gather.
-            points = features
-            indices : (B, M) where M is the number of points.
-            idx = indices
-            out: (B, C, M) where M is the number of points.
+ * @brief Gather points with given index.
+ * @param[in] ctx diopi context.
+ * @param points features  (B, C, N) features to gather. points = features
+ * @param idx indices (B, M) where M is the number of points. idx = indices
+ * @param b,c,n points (b, c, n) features.
+ * @param[out] out  (B, C, M) where M is the number of points.
  */
 DIOPI_API diopiError_t diopiGatherPoints(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiConstTensorHandle_t idx, diopiTensorHandle_t out,
                                                   int64_t b, int64_t c, int64_t n, int64_t npoints);
+/**
+ * @brief Backward function for Gather points with given index.
+ * @param[in] ctx diopi context.
+ * @param grad_out the gradient of ``out``.
+ * @param[out] grad_points  the gradient of ``points``.
+ * @sa definition of other parameters, refer to diopiGatherPoints()
+ */
 DIOPI_API diopiError_t diopiGatherPointsBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t idx, diopiTensorHandle_t grad_points,
                                                    int64_t b, int64_t c, int64_t n, int64_t npoints);
 
 /**
- * \brief Groups points with a ball query of radius.
- * Args:
-            features (Tensor): Tensor of features to group, input shape is
-                (B, C, N) or stacked inputs (N1 + N2 ..., C). points/features_tensor.
-            indices (Tensor):  The indices of features to group with, input
-                shape is (B, npoint, nsample) or stacked inputs
-                (M1 + M2 ..., nsample). idx/idx_tensor. npoints = indices.size(1).
-            features_batch_cnt (Tensor, optional): Input features nums in
-                each batch, just like (N1, N2, ...). Defaults to None.
-                New in version 1.7.0. features_batch_cnt_tensor.
-            indices_batch_cnt (Tensor, optional): Input indices nums in
-                each batch, just like (M1, M2, ...). Defaults to None.
-                New in version 1.7.0. idx_batch_cnt_tensor
-            returns: Grouped features, the shape is (B, C, npoint, nsample)
-            or (M1 + M2 ..., C, nsample). out/out_tensor.
+ * @brief Groups points with a ball query of radius.
+ * @param[in] ctx diopi context.
+ * @param points features (Tensor): Tensor of features to group, input shape is
+     (B, C, N) or stacked inputs (N1 + N2 ..., C). points=features/features_tensor.
+ * @param idx indices (Tensor):  The indices of features to group with, input
+     shape is (B, npoint, nsample) or stacked inputs
+     (M1 + M2 ..., nsample). idx=indices.
+ * @param b,c,n points (b, c, n)
+ * @param npoints,nsample idx (B, npoint, nsample)
+ * @param[out] out Grouped features, the shape is (B, C, npoint, nsample)
+     or (M1 + M2 ..., C, nsample).
  */
 DIOPI_API diopiError_t diopiGroupPoints(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiConstTensorHandle_t idx, diopiTensorHandle_t out,
                                                  int64_t b, int64_t c, int64_t n, int64_t npoints, int64_t nsample);
+/**
+ * @brief Backward function for Groups points with a ball query of radius.
+ * @param[in] ctx diopi context.
+ * @param grad_out the gradient of ``out``.
+ * @param[out] grad_points the gradient of ``points``.
+ * @sa definition of other parameters, refer to diopiGroupPoints()
+ */
 DIOPI_API diopiError_t diopiGroupPointsBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t idx, diopiTensorHandle_t grad_points,
                                                   int64_t b, int64_t c, int64_t n, int64_t npoints, int64_t nsample);
+
+/**
+ * @brief Groups points with a ball query of radius(stacked input).
+ * @param[in] ctx diopi context.
+ * @param features_tensor features (Tensor): Tensor of features to group, stacked input shape
+      (N1 + N2 ..., C). features_tensor=features
+ * @param idx_tensor indices (Tensor):  The indices of features to group with, stacked inputs
+      (M1 + M2 ..., nsample). idx_tensor = indices.
+ * @param features_batch_cnt_tensor (Tensor, optional): Input features nums in
+       each batch, just like (N1, N2, ...). Defaults to None.
+       New in version 1.7.0. .
+ * @param idx_batch_cnt_tensor (Tensor, optional): Input indices nums in
+       each batch, just like (M1, M2, ...). Defaults to None.
+       New in version 1.7.0.
+ * @param n,c features_tensor (n, c)
+ * @param b idx_batch_cnt_tensor.shape[0]
+ * @param nsample idx_tensor (m, nsample)
+ * @param[out] out_tensor Grouped features, the shape is (B, C, npoint, nsample)
+       or (M1 + M2 ..., C, nsample).
+ */
 DIOPI_API diopiError_t diopiStackGroupPoints(diopiContextHandle_t ctx,
                                      diopiConstTensorHandle_t features_tensor,
                                      diopiConstTensorHandle_t features_batch_cnt_tensor,
@@ -1268,6 +1332,13 @@ DIOPI_API diopiError_t diopiStackGroupPoints(diopiContextHandle_t ctx,
                                      diopiConstTensorHandle_t idx_batch_cnt_tensor,
                                      diopiTensorHandle_t out_tensor,
                                      int64_t b, int64_t c, int64_t m, int64_t nsample);
+/**
+ * @brief Backward function for Groups points with a ball query of radius(stacked input).
+ * @param[in] ctx diopi context.
+ * @param grad_out_tensor the gradient of ``out``.
+ * @param[out] grad_features_tensor the gradient of ``features_tensor``.
+ * @sa definition of other parameters, refer to diopiStackGroupPoints()
+ */
 DIOPI_API diopiError_t diopiStackGroupPointsBackward(diopiContextHandle_t ctx,
                                       diopiConstTensorHandle_t grad_out_tensor,
                                       diopiConstTensorHandle_t idx_tensor,
@@ -1277,61 +1348,54 @@ DIOPI_API diopiError_t diopiStackGroupPointsBackward(diopiContextHandle_t ctx,
                                       int64_t b, int64_t c, int64_t m, int64_t n, int64_t nsample);
 
 /**
- * \brief Calculate boxes BEV overlap.
- * Args:
-        boxes_a: Input boxes a with shape (M, 7).
-        boxes_b: Input boxes b with shape (N, 7).
-        ans_overlap: BEV overlap result with shape (M, N).
+ * @brief Calculate boxes BEV overlap.
+ * @param[in] ctx diopi context.
+ * @param boxes_a: Input boxes a with shape (M, 7).
+ * @param boxes_b: Input boxes b with shape (N, 7).
+ * @param[out] ans_overlap: BEV overlap result with shape (M, N).
  */
 DIOPI_API diopiError_t diopiIou3dBoxesOverlapBev(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes_a, diopiConstTensorHandle_t boxes_b, diopiTensorHandle_t ans_overlap);
 
 /**
- * \brief 3D NMS function GPU implementation (for BEV boxes).
- * Args:
-        boxes: Input boxes with the shape of (N, 7)
-            ([x, y, z, dx, dy, dz, heading]).
-        keep: empty tensor for calculations.
-        iou_threshold (float): Overlap threshold of NMS. nms_overlap_thresh.
-        keep_num: Indexes after NMS.
+ * @brief 3D NMS function GPU implementation (for BEV boxes).
+ * @param[in] ctx diopi context.
+ * @param boxes  Input boxes with the shape of (N, 7)
+     ([x, y, z, dx, dy, dz, heading]).
+ * @param nms_overlap_thresh float: Overlap threshold of NMS.
+ * @param[out] keep  Indexes after NMS.
+ * @param keep_num  num_out for keep
  */
 DIOPI_API diopiError_t diopiIou3dNms3d(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes, diopiTensorHandle_t keep, diopiTensorHandle_t keep_num, float nms_overlap_thresh);
 
 /**
- * \brief Normal 3D NMS function GPU implementation. The overlap of two boxes for
+ * @brief Normal 3D NMS function GPU implementation. The overlap of two boxes for
           IoU calculation is defined as the exact overlapping area of the two boxes
           WITH their yaw angle set to 0.
- * Args:
-        boxes: Input boxes with shape (N, 7).
-            ([x, y, z, dx, dy, dz, heading]).
-        keep: empty tensor for calculations.
-        iou_threshold (float): Overlap threshold of NMS. nms_overlap_thresh.
-        keep_num: Remaining indices with scores in descending order.
+ * @param[in] ctx diopi context.
+ * @sa definition of other parameters, refer to diopiIou3dNms3d()
  */
 DIOPI_API diopiError_t diopiIou3dNms3dNormal(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes, diopiTensorHandle_t keep, diopiTensorHandle_t keep_num, float nms_overlap_thresh);
 
 /**
- * \brief KNN based on heap data structure.
- * Args:
-            k (int): number of nearest neighbors. nsample
-            xyz : (B, N, 3) if transposed == False, else
-                (B, 3, N). xyz coordinates of the features. xyz_tensor
-            center_xyz : (B, npoint, 3) if transposed
-                is False, else (B, 3, npoint). centers of the knn query.
-                Default: None. new_xyz_tensor
-            transposed (bool, optional): whether the input tensors are
-                transposed. Should not explicitly use this keyword when
-                calling knn (=KNN.apply), just add the fourth param.
-                Default: False.
-            m=npoint
-            idx_tensor: (B, npoint, k) tensor with the indices of the
-                features that form k-nearest neighbours.
-            dist2_tensor: (B, npoint, k) distance tensors within calculations.
+ * @brief KNN based on heap data structure.
+ * @param[in] ctx diopi context.
+ * @param xyz_tensor (B, N, 3) if transposed == False, else
+     (B, 3, N). xyz coordinates of the features.
+ * @param new_xyz_tensor   (B, npoint, 3) if transposed
+     is False, else (B, 3, npoint). centers of the knn query.
+     Default: None.
+ * @param nsample int, number of nearest neighbors. 
+ * @param b,n xyz_tensor (b, n, 3)
+ * @param m = npoint
+ * @param[out] idx_tensor  (B, npoint, k) tensor with the indices of the
+     features that form k-nearest neighbours.
+ * @param dist2_tensor  (B, npoint, k) distance tensors after calculations.
  */
 DIOPI_API diopiError_t diopiKnn(diopiContextHandle_t ctx, diopiTensorHandle_t xyz_tensor, diopiTensorHandle_t new_xyz_tensor, diopiTensorHandle_t idx_tensor,
                  diopiTensorHandle_t dist2_tensor, int64_t b, int64_t n, int64_t m, int64_t nsample);
 
 /**
- * \brief A MaskedConv2d which inherits the official Conv2d. The masked forward doesn't implement the backward function and only
+ * @brief A MaskedConv2d which inherits the official Conv2d. The masked forward doesn't implement the backward function and only
     supports the stride parameter to be 1 currently.
  */
 DIOPI_API diopiError_t diopiMaskedIm2col(diopiContextHandle_t ctx, diopiConstTensorHandle_t im, diopiConstTensorHandle_t mask_h_idx,
@@ -1343,7 +1407,7 @@ DIOPI_API diopiError_t diopiMaskedCol2im(diopiContextHandle_t ctx, diopiConstTen
                                 int64_t width, int64_t channels);
 
 /**
- * \brief A ModulatedDeformable Conv Encapsulation that acts as normal Conv layers.
+ * @brief A ModulatedDeformable Conv Encapsulation that acts as normal Conv layers.
  */
 DIOPI_API diopiError_t diopiModulatedDeformConv(
     diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t weight, diopiTensorHandle_t bias, diopiTensorHandle_t ones, diopiTensorHandle_t offset,
@@ -1360,23 +1424,22 @@ DIOPI_API diopiError_t diopiModulatedDeformConvBackward(
     const bool with_bias);
 
 /**
- * \brief An attention module used in Deformable-Detr.
- * Args:
-            value : The value has shape
-                (bs, num_keys, mum_heads, embed_dims//num_heads)
-            value_spatial_shapes : Spatial shape of
-                each feature map, has shape (num_levels, 2),
-                last dimension 2 represent (h, w). spatial_shapes
-            level_start_index: level_start_index input tensor.
-            sampling_locations : The location of sampling points,
-                has shape
-                (bs ,num_queries, num_heads, num_levels, num_points, 2),
-                the last dimension 2 represent (x, y). sampling_loc
-            attention_weights : The weight of sampling points
-                used when calculate the attention, has shape
-                (bs ,num_queries, num_heads, num_levels, num_points), attn_weight.
-            im2col_step : The step used in image to column.
-            out: has shape (bs, num_queries, embed_dims)
+ * @brief An attention module used in Deformable-Detr.
+ * @param[in] ctx diopi context.
+ * @param value   The value has shape
+     (bs, num_keys, mum_heads, embed_dims//num_heads)
+ * @param spatial_shapes  Spatial shape of
+     each feature map, has shape (num_levels, 2),
+     last dimension 2 represent (h, w). 
+ * @param level_start_index: level_start_index input tensor.
+ * @param sampling_loc   The location of sampling points,
+     has shape (bs ,num_queries, num_heads, num_levels, num_points, 2),
+     the last dimension 2 represent (x, y). 
+ * @param attn_weight  The weight of sampling points
+     used when calculate the attention, has shape
+     (bs ,num_queries, num_heads, num_levels, num_points).
+ * @param im2col_step   The step used in image to column.
+ * @param[out] out  attention module out which has shape (bs, num_queries, embed_dims)
  */
 DIOPI_API diopiError_t diopiMsDeformAttn(diopiContextHandle_t ctx, diopiTensorHandle_t* out,
                                    diopiConstTensorHandle_t value,
@@ -1385,6 +1448,13 @@ DIOPI_API diopiError_t diopiMsDeformAttn(diopiContextHandle_t ctx, diopiTensorHa
                                    diopiConstTensorHandle_t sampling_loc,
                                    diopiConstTensorHandle_t attn_weight,
                                    int64_t im2col_step);
+/**
+ * @brief Backward function for An attention module used in Deformable-Detr.
+ * @param[in] ctx diopi context.
+ * @param grad_output  the gradient of ``out``.
+ * @param[out] grad_value,grad_sampling_loc,grad_attn_weight  the gradient of ``value``,``sampling_loc``,``attn_weight``.
+ * @sa definition of other parameters, refer to diopiMsDeformAttn()
+ */
 DIOPI_API diopiError_t diopiMsDeformAttnBackward(
     diopiContextHandle_t ctx, diopiConstTensorHandle_t value, diopiConstTensorHandle_t spatial_shapes,
     diopiConstTensorHandle_t level_start_index, diopiConstTensorHandle_t sampling_loc,
@@ -1392,35 +1462,27 @@ DIOPI_API diopiError_t diopiMsDeformAttnBackward(
     diopiTensorHandle_t grad_sampling_loc, diopiTensorHandle_t grad_attn_weight, int64_t im2col_step);
 
 /**
- * \brief NMS from mmcv. This function is modified from: https://github.com/pytorch/vision/
- * Args:
-        boxes : boxes in shape (N, 4).
-        scores : scores in shape (N, ).
-        iou_threshold (float): IoU threshold for NMS.
-        offset (int, 0 or 1): boxes' width or height is (x2 - x1 + offset).
-        score_threshold (float): score threshold for NMS. iou_threshold.
-        max_num (int): maximum number of boxes after NMS. offset.
-        out: kept dets (boxes and scores) and indice, which always have
-            the same data type as the input.
+ * @brief NMS from mmcv. This function is modified from: https://github.com/pytorch/vision/
+ * @param[in] ctx diopi context.
+ * @param dets boxes boxes in shape (N, 4). dets=boxes.
+ * @param scores scores in shape (N, ).
+ * @param iou_threshold float: IoU threshold for NMS.
+ * @param offset (int, 0 or 1): boxes' width or height is (x2 - x1 + offset).
+ * @param[out] out indice, which always have the same data type as the input.
  */
 DIOPI_API diopiError_t diopiNmsMmcv(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t dets,
                                     diopiConstTensorHandle_t scores, double iou_threshold, int64_t offset);
 
 /**
- * \brief Performs non-maximum suppression (NMS) on the rotated boxes according to their intersection-over-union (IoU).
- * Args:
-        dets :  Rotated boxes in shape (N, 5).
-            They are expected to be in
-            (x_ctr, y_ctr, width, height, angle_radian) format.
-        order_t, dets_sorted: order tensor and ordered dets
-        scores : scores in shape (N, ).
-        iou_threshold (float): IoU thresh for NMS.
-        labels : boxes' label in shape (N,).
-        clockwise (bool): flag indicating whether the positive angular
-            orientation is clockwise. default True.
-            `New in version 1.4.3.`
-        out: kept dets(boxes and scores) and indice, which is always the
-        same data type as the input.
+ * @brief Performs non-maximum suppression (NMS) on the rotated boxes according to their intersection-over-union (IoU).
+ * @param[in] ctx diopi context.
+ * @param dets Rotated boxes in shape (N, 5). They are expected to be in
+     (x_ctr, y_ctr, width, height, angle_radian) format.
+ * @param order_t, dets_sorted order tensor and ordered dets
+ * @param scores  scores in shape (N, ).
+ * @param iou_threshold float: IoU thresh for NMS.
+ * @param multi_label  boxes' label in shape (N,).
+ * @param out indice, which is always the same data type as the input.
  */
 DIOPI_API diopiError_t diopiNmsRotated(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t dets,
                                     diopiConstTensorHandle_t scores, diopiConstTensorHandle_t order_t, diopiConstTensorHandle_t dets_sorted,
