@@ -913,13 +913,8 @@ DIOPI_API diopiError_t diopiCol2Im(diopiContextHandle_t ctx, diopiTensorHandle_t
  */
 DIOPI_API diopiError_t diopiRepeat(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input, diopiSize_t repeats_size);
 
-
-
-
-
-
-
-/* DIOPI functions from MMCV extension ops <https://github.com/open-mmlab/mmcv.git> */
+/* DIOPI functions from MMCV extension ops
+ * <https://github.com/open-mmlab/mmcv.git> */
 
 /**
  * @brief Perform weighted sum to generate output features according to scores.
@@ -935,16 +930,28 @@ DIOPI_API diopiError_t diopiRepeat(diopiContextHandle_t ctx, diopiTensorHandle_t
          Pre-computed center features to be aggregated.
  * @param knn_idx (B, npoint, K), index of sampled kNN.
          We assume the first idx in each row is the idx of the center.
- * @param B,N,npoint,M,K,out_dim scores: (B, npoint, K, M); points: (B, N, M, out_dim)
- * @param aggregate (str, optional): Aggregation method. Can be 'sum', 'avg' or 'max'. Defaults: 'sum'.
+ * @param B,N,npoint,M,K,out_dim scores: (B, npoint, K, M); points: (B, N, M,
+ out_dim)
+ * @param aggregate (str, optional): Aggregation method. Can be 'sum', 'avg' or
+ 'max'. Defaults: 'sum'.
  * @param[out] output (B, out_dim, npoint, K), the aggregated features.
  */
-DIOPI_API diopiError_t diopiAssignScoreWithk(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiConstTensorHandle_t centers,
-                                             diopiConstTensorHandle_t scores, diopiConstTensorHandle_t knn_idx,
-                                             diopiTensorHandle_t output, int64_t B, int64_t N, int64_t npoint, int64_t M,
-                                             int64_t K, int64_t out_dim, int64_t aggregate);
+DIOPI_API diopiError_t diopiAssignScoreWithk(diopiContextHandle_t ctx,
+                                             diopiTensorHandle_t output,
+                                             diopiConstTensorHandle_t points,
+                                             diopiConstTensorHandle_t centers,
+                                             diopiConstTensorHandle_t scores,
+                                             diopiConstTensorHandle_t knn_idx,
+                                             int64_t B,
+                                             int64_t N,
+                                             int64_t npoint,
+                                             int64_t M,
+                                             int64_t K,
+                                             int64_t out_dim,
+                                             int64_t aggregate);
 /**
- * @brief Backward function for perform weighted sum to generate output features according to scores.
+ * @brief Backward function for perform weighted sum to generate output features
+ * according to scores.
  * @param[in] ctx diopi context.
  * @param grad_out the gradient of ``output``
  * @param[out] grad_points the gradient of ``points``.
@@ -952,12 +959,23 @@ DIOPI_API diopiError_t diopiAssignScoreWithk(diopiContextHandle_t ctx, diopiCons
  * @param grad_centers the gradient of ``centers``
  * @sa definition of other parameters, refer to diopiAssignScoreWithk()
  */
-DIOPI_API diopiError_t diopiAssignScoreWithkBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t points,
-                                                     diopiConstTensorHandle_t centers, diopiConstTensorHandle_t scores,
-                                                     diopiConstTensorHandle_t knn_idx, diopiTensorHandle_t grad_points,
-                                                     diopiTensorHandle_t grad_centers, diopiTensorHandle_t grad_scores,
-                                                     int64_t B, int64_t N, int64_t npoint, int64_t M, int64_t K, int64_t out_dim,
-                                                     int64_t aggregate);
+DIOPI_API diopiError_t
+diopiAssignScoreWithkBackward(diopiContextHandle_t ctx,
+                              diopiTensorHandle_t grad_points,
+                              diopiTensorHandle_t grad_centers,
+                              diopiTensorHandle_t grad_scores,
+                              diopiConstTensorHandle_t grad_out,
+                              diopiConstTensorHandle_t points,
+                              diopiConstTensorHandle_t centers,
+                              diopiConstTensorHandle_t scores,
+                              diopiConstTensorHandle_t knn_idx,
+                              int64_t B,
+                              int64_t N,
+                              int64_t npoint,
+                              int64_t M,
+                              int64_t K,
+                              int64_t out_dim,
+                              int64_t aggregate);
 
 /**
  * @brief Find nearby points in spherical space.
@@ -973,8 +991,16 @@ DIOPI_API diopiError_t diopiAssignScoreWithkBackward(diopiContextHandle_t ctx, d
  * @param[out] idx (B, npoint, nsample) tensor with the indices of the
      features that form the query balls.
  */
-DIOPI_API diopiError_t diopiBallQuery(diopiContextHandle_t ctx, diopiConstTensorHandle_t center_xyz, diopiConstTensorHandle_t xyz, diopiTensorHandle_t idx, int64_t B, int64_t N, int64_t npoint,
-                                      float min_radius, float max_radius, int64_t sample_num);
+DIOPI_API diopiError_t diopiBallQuery(diopiContextHandle_t ctx,
+                                      diopiTensorHandle_t idx,
+                                      diopiConstTensorHandle_t center_xyz,
+                                      diopiConstTensorHandle_t xyz,
+                                      int64_t B,
+                                      int64_t N,
+                                      int64_t npoint,
+                                      int64_t sample_num,
+                                      float min_radius,
+                                      float max_radius);
 /**
  * @brief Find nearby points in spherical space.(Stacked method)
  * @param[in] ctx diopi context.
@@ -986,8 +1012,15 @@ DIOPI_API diopiError_t diopiBallQuery(diopiContextHandle_t ctx, diopiConstTensor
      New in version 1.7.0.
  * @sa definition of other parameters, refer to diopiBallQuery()
  */
-DIOPI_API diopiError_t diopiStackBallQuery(diopiContextHandle_t ctx, diopiConstTensorHandle_t center_xyz, diopiConstTensorHandle_t center_xyz_batch_cnt, diopiConstTensorHandle_t xyz,
-                                           diopiConstTensorHandle_t xyz_batch_cnt, diopiTensorHandle_t idx, float max_radius, int64_t sample_num);
+DIOPI_API diopiError_t
+diopiStackBallQuery(diopiContextHandle_t ctx,
+                    diopiTensorHandle_t idx,
+                    diopiConstTensorHandle_t center_xyz,
+                    diopiConstTensorHandle_t center_xyz_batch_cnt,
+                    diopiConstTensorHandle_t xyz,
+                    diopiConstTensorHandle_t xyz_batch_cnt,
+                    float max_radius,
+                    int64_t sample_num);
 
 /**
  * @brief Calculate overlap between two set of bboxes.
@@ -1003,8 +1036,13 @@ DIOPI_API diopiError_t diopiStackBallQuery(diopiContextHandle_t ctx, diopiConstT
  * @param[out] ious  the ious betweens boxes. If ``aligned`` is
      ``False``, the shape of ious is (m, n) else (m, 1).
  */
-DIOPI_API diopiError_t diopiBboxOverlaps(diopiContextHandle_t ctx, diopiConstTensorHandle_t bboxes1, diopiConstTensorHandle_t bboxes2, diopiTensorHandle_t ious,
-                                         int64_t mode, bool aligned, int64_t offset);
+DIOPI_API diopiError_t diopiBboxOverlaps(diopiContextHandle_t ctx,
+                                         diopiTensorHandle_t ious,
+                                         diopiConstTensorHandle_t bboxes1,
+                                         diopiConstTensorHandle_t bboxes2,
+                                         int64_t mode,
+                                         int64_t offset,
+                                         bool aligned);
 
 /**
  * @brief Border align pooling layer.
@@ -1019,8 +1057,11 @@ DIOPI_API diopiError_t diopiBboxOverlaps(diopiContextHandle_t ctx, diopiConstTen
          (top,left,bottom,right) for the last dimension.
  * @param argmax_idx  `argmax_idx` only used for backward.
  */
-DIOPI_API diopiError_t diopiBorderAlign(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t boxes,
-                                        diopiTensorHandle_t output, diopiTensorHandle_t argmax_idx,
+DIOPI_API diopiError_t diopiBorderAlign(diopiContextHandle_t ctx,
+                                        diopiTensorHandle_t output,
+                                        diopiTensorHandle_t argmax_idx,
+                                        diopiConstTensorHandle_t input,
+                                        diopiConstTensorHandle_t boxes,
                                         int64_t pool_size);
 /**
  * @brief Backward function for border align pooling layer.
@@ -1029,12 +1070,17 @@ DIOPI_API diopiError_t diopiBorderAlign(diopiContextHandle_t ctx, diopiConstTens
  * @param[out] grad_input  the gradient of ``input``
  * @sa definition of other parameters, refer to diopiBorderAlign()
  */
-DIOPI_API diopiError_t diopiBorderAlignBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t boxes,
-                                                diopiConstTensorHandle_t argmax_idx, diopiTensorHandle_t grad_input,
-                                                int64_t pool_size);
+DIOPI_API diopiError_t
+diopiBorderAlignBackward(diopiContextHandle_t ctx,
+                         diopiTensorHandle_t grad_input,
+                         diopiConstTensorHandle_t grad_output,
+                         diopiConstTensorHandle_t boxes,
+                         diopiConstTensorHandle_t argmax_idx,
+                         int64_t pool_size);
 
 /**
- * @brief Return intersection-over-union (Jaccard index) of boxes(BoxIouRotated).
+ * @brief Return intersection-over-union (Jaccard index) of
+ boxes(BoxIouRotated).
  * @param[in] ctx diopi context.
  * @param bboxes1   quadrilateral bboxes 1. It has shape (N, 8),
      indicating (x1, y1, ..., x4, y4) for each row.
@@ -1042,78 +1088,143 @@ DIOPI_API diopiError_t diopiBorderAlignBackward(diopiContextHandle_t ctx, diopiC
      indicating (x1, y1, ..., x4, y4) for each row.
  * @param mode (str)  "iou" (intersection over union) or iof (intersection over
      foreground).
- * @param aligned  If ``aligned`` is ``False``, then calculate the ious between each bbox
-     of bboxes1 and bboxes2, otherwise the ious between each aligned pair of
-     bboxes1 and bboxes2.
+ * @param aligned  If ``aligned`` is ``False``, then calculate the ious between
+ each bbox of bboxes1 and bboxes2, otherwise the ious between each aligned pair
+ of bboxes1 and bboxes2.
  * @param[out] ious  the ious betweens boxes. If ``aligned`` is ``False``,
      the shape of ious is (N, M) else (N,).
  */
-DIOPI_API diopiError_t diopiBoxIouRotated(diopiContextHandle_t ctx, diopiConstTensorHandle_t bboxes1, diopiConstTensorHandle_t bboxes2, diopiTensorHandle_t ious,
-                                          int64_t mode, bool aligned);
+DIOPI_API diopiError_t diopiBoxIouRotated(diopiContextHandle_t ctx,
+                                          diopiTensorHandle_t ious,
+                                          diopiConstTensorHandle_t bboxes1,
+                                          diopiConstTensorHandle_t bboxes2,
+                                          int64_t mode,
+                                          bool aligned);
 /**
  * @brief Return intersection-over-union (Jaccard index) of boxes(BoxIouQuadri).
  * @param[in] ctx diopi context.
  * @sa definition of other parameters, refer to diopiBoxIouRotated()
  */
-DIOPI_API diopiError_t diopiBoxIouQuadri(diopiContextHandle_t ctx, diopiConstTensorHandle_t bboxes1, diopiConstTensorHandle_t bboxes2, diopiTensorHandle_t ious,
-                                         int64_t mode, bool aligned);
+DIOPI_API diopiError_t diopiBoxIouQuadri(diopiContextHandle_t ctx,
+                                         diopiTensorHandle_t ious,
+                                         diopiConstTensorHandle_t bboxes1,
+                                         diopiConstTensorHandle_t bboxes2,
+                                         int64_t mode,
+                                         bool aligned);
 
 /**
- * @brief Content-Aware ReAssembly of FEatures. Please refer to `CARAFE: Content-Aware ReAssembly of FEatures
-    <https://arxiv.org/abs/1905.02188>`_ for more details. 
+ * @brief Content-Aware ReAssembly of FEatures. Please refer to `CARAFE:
+ Content-Aware ReAssembly of FEatures <https://arxiv.org/abs/1905.02188>`_ for
+ more details.
  */
-DIOPI_API diopiError_t diopiCarafe(diopiContextHandle_t ctx, diopiConstTensorHandle_t features, diopiConstTensorHandle_t masks, diopiTensorHandle_t rfeatures,
-                                   diopiTensorHandle_t routput, diopiTensorHandle_t rmasks, diopiTensorHandle_t output, int64_t kernel_size, int64_t group_size, int64_t scale_factor);
-DIOPI_API diopiError_t diopiCarafeBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t top_grad, diopiConstTensorHandle_t rfeatures, diopiConstTensorHandle_t masks,
-                                           diopiTensorHandle_t rtop_grad, diopiTensorHandle_t rbottom_grad_hs, diopiTensorHandle_t rbottom_grad, diopiTensorHandle_t rmask_grad,
-                                           diopiTensorHandle_t bottom_grad, diopiTensorHandle_t mask_grad, int64_t kernel_size, int64_t group_size, int64_t scale_factor);
-DIOPI_API diopiError_t diopiCarafeNaive(diopiContextHandle_t ctx, diopiConstTensorHandle_t features,
-                                        diopiConstTensorHandle_t masks, diopiTensorHandle_t output,
+DIOPI_API diopiError_t diopiCarafe(diopiContextHandle_t ctx,
+                                   diopiTensorHandle_t rfeatures,
+                                   diopiTensorHandle_t routput,
+                                   diopiTensorHandle_t rmasks,
+                                   diopiTensorHandle_t output,
+                                   diopiConstTensorHandle_t features,
+                                   diopiConstTensorHandle_t masks,
+                                   int64_t kernel_size,
+                                   int64_t group_size,
+                                   int64_t scale_factor);
+DIOPI_API diopiError_t diopiCarafeBackward(diopiContextHandle_t ctx,
+                                           diopiTensorHandle_t rtop_grad,
+                                           diopiTensorHandle_t rbottom_grad_hs,
+                                           diopiTensorHandle_t rbottom_grad,
+                                           diopiTensorHandle_t rmask_grad,
+                                           diopiTensorHandle_t bottom_grad,
+                                           diopiTensorHandle_t mask_grad,
+                                           diopiConstTensorHandle_t top_grad,
+                                           diopiConstTensorHandle_t rfeatures,
+                                           diopiConstTensorHandle_t masks,
+                                           int64_t kernel_size,
+                                           int64_t group_size,
+                                           int64_t scale_factor);
+DIOPI_API diopiError_t diopiCarafeNaive(diopiContextHandle_t ctx,
+                                        diopiTensorHandle_t output,
+                                        diopiConstTensorHandle_t features,
+                                        diopiConstTensorHandle_t masks,
                                         int64_t kernel_size,
                                         int64_t group_size,
                                         int64_t scale_factor);
-DIOPI_API diopiError_t diopiCarafeNaiveBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t top_grad, diopiConstTensorHandle_t features, diopiConstTensorHandle_t masks,
-                                                diopiTensorHandle_t bottom_grad, diopiTensorHandle_t mask_grad, int64_t kernel_size, int64_t group_size, int64_t scale_factor);
-
+DIOPI_API diopiError_t
+diopiCarafeNaiveBackward(diopiContextHandle_t ctx,
+                         diopiTensorHandle_t bottom_grad,
+                         diopiTensorHandle_t mask_grad,
+                         diopiConstTensorHandle_t top_grad,
+                         diopiConstTensorHandle_t features,
+                         diopiConstTensorHandle_t masks,
+                         int64_t kernel_size,
+                         int64_t group_size,
+                         int64_t scale_factor);
 
 /**
- * @brief This correlation operator works for optical flow correlation computation.
+ * @brief This correlation operator works for optical flow correlation
+ computation.
  * @param[in] ctx diopi context.
  * @param input1, input2  input tensor
- * @param kH, kW kernel_size int: The size of sliding window i.e. local neighborhood
-     representing the center points and involved in correlation
+ * @param kH, kW kernel_size int: The size of sliding window i.e. local
+ neighborhood representing the center points and involved in correlation
      computation. Defaults to 1. kH, kW = _pair(kernel_size).
- * @param patchH, patchW max_displacement int: The radius for computing correlation volume,
-     but the actual working space can be dilated by dilation_patch.
-     Defaults to 1. patch_size = max_displacement * 2 + 1.
-     patchH, patchW = _pair(patch_size)
- * @param dH, dW stride int: The stride of the sliding blocks in the input spatial
-     dimensions. Defaults to 1. dH, dW = _pair(stride)
- * @param padH, padW padding int: Zero padding added to all four sides of the input1.
-     Defaults to 0. padH, padW = _pair(padding).
- * @param dilationH, dilationW dilation int: The spacing of local neighborhood that will involved
-     in correlation. Defaults to 1. dilationH, dilationW = _pair(dilation).
- * @param dilation_patchH, dilation_patchW dilation_patch int: The spacing between position need to compute
-     correlation.  Defaults to 1. dilation_patchH, dilation_patchW =  _pair(
-     dilation_patch)
+ * @param patchH, patchW max_displacement int: The radius for computing
+ correlation volume, but the actual working space can be dilated by
+ dilation_patch. Defaults to 1. patch_size = max_displacement * 2 + 1. patchH,
+ patchW = _pair(patch_size)
+ * @param dH, dW stride int: The stride of the sliding blocks in the input
+ spatial dimensions. Defaults to 1. dH, dW = _pair(stride)
+ * @param padH, padW padding int: Zero padding added to all four sides of the
+ input1. Defaults to 0. padH, padW = _pair(padding).
+ * @param dilationH, dilationW dilation int: The spacing of local neighborhood
+ that will involved in correlation. Defaults to 1. dilationH, dilationW =
+ _pair(dilation).
+ * @param dilation_patchH, dilation_patchW dilation_patch int: The spacing
+ between position need to compute correlation.  Defaults to 1. dilation_patchH,
+ dilation_patchW =  _pair( dilation_patch)
  * @param[out] output  correlation operator out tensor for input tensor
  */
-DIOPI_API diopiError_t diopiCorrelation(diopiContextHandle_t ctx, diopiConstTensorHandle_t input1, diopiConstTensorHandle_t input2, diopiTensorHandle_t output, int64_t kH,
-                                        int64_t kW, int64_t patchH, int64_t patchW, int64_t padH, int64_t padW,
-                                        int64_t dilationH, int64_t dilationW, int64_t dilation_patchH,
-                                        int64_t dilation_patchW, int64_t dH, int64_t dW);
+DIOPI_API diopiError_t diopiCorrelation(diopiContextHandle_t ctx,
+                                        diopiTensorHandle_t output,
+                                        diopiConstTensorHandle_t input1,
+                                        diopiConstTensorHandle_t input2,
+                                        int64_t kH,
+                                        int64_t kW,
+                                        int64_t patchH,
+                                        int64_t patchW,
+                                        int64_t padH,
+                                        int64_t padW,
+                                        int64_t dilationH,
+                                        int64_t dilationW,
+                                        int64_t dilation_patchH,
+                                        int64_t dilation_patchW,
+                                        int64_t dH,
+                                        int64_t dW);
 /**
- * @brief Backward function for the correlation operator works for optical flow correlation computation.
+ * @brief Backward function for the correlation operator works for optical flow
+ * correlation computation.
  * @param[in] ctx diopi context.
- * @param grad_output the gradient of ``output`` 
+ * @param grad_output the gradient of ``output``
  * @param[out] grad_input1, grad_input2  the gradient of input tensors
  * @sa definition of other parameters, refer to diopiCorrelation()
  */
-DIOPI_API diopiError_t diopiCorrelationBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t input1, diopiConstTensorHandle_t input2,
-                                                diopiTensorHandle_t grad_input1, diopiTensorHandle_t grad_input2, int64_t kH,
-                                                int64_t kW, int64_t patchH, int64_t patchW, int64_t padH, int64_t padW,
-                                                int64_t dilationH, int64_t dilationW, int64_t dilation_patchH,
-                                                int64_t dilation_patchW, int64_t dH, int64_t dW);
+DIOPI_API diopiError_t
+diopiCorrelationBackward(diopiContextHandle_t ctx,
+                         diopiTensorHandle_t grad_input1,
+                         diopiTensorHandle_t grad_input2,
+                         diopiConstTensorHandle_t grad_output,
+                         diopiConstTensorHandle_t input1,
+                         diopiConstTensorHandle_t input2,
+                         int64_t kH,
+                         int64_t kW,
+                         int64_t patchH,
+                         int64_t patchW,
+                         int64_t padH,
+                         int64_t padW,
+                         int64_t dilationH,
+                         int64_t dilationW,
+                         int64_t dilation_patchH,
+                         int64_t dilation_patchW,
+                         int64_t dH,
+                         int64_t dW);
 
 /**
  * @brief Deformable 2D convolution.
@@ -1133,10 +1244,10 @@ DIOPI_API diopiError_t diopiCorrelationBackward(diopiContextHandle_t ctx, diopiC
  * @param kH, kW kH=weight.size(2),kW=weight.size(3)
  * @param dH, dW stride (int, tuple): Stride of the convolution. Default: 1.
      dW=stride[1], dH=stride[0]
- * @param padH, padW padding (int or tuple): Zero-padding added to both sides of the input.
-     Default: 0. padW=padding[1], padH=padding[0],
- * @param dilationH,dilationW dilation (int or tuple): Spacing between kernel elements. Default: 1.
-     dilationW= dilation[1], dilationH= dilation[0]
+ * @param padH, padW padding (int or tuple): Zero-padding added to both sides of
+ the input. Default: 0. padW=padding[1], padH=padding[0],
+ * @param dilationH,dilationW dilation (int or tuple): Spacing between kernel
+ elements. Default: 1. dilationW= dilation[1], dilationH= dilation[0]
  * @param groups int: Number of blocked connections from input.
      channels to output channels. Default: 1.
  * @param deform_groups int: Number of deformable group partitions.
@@ -1146,24 +1257,52 @@ DIOPI_API diopiError_t diopiCorrelationBackward(diopiContextHandle_t ctx, diopiC
      `New in version 1.3.17.`
  * @param[out] output, columns, ones  Output of the layer.
  */
-DIOPI_API diopiError_t diopiDeformConv(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t weight, diopiConstTensorHandle_t offset,
-                                       diopiTensorHandle_t output, diopiTensorHandle_t columns, diopiTensorHandle_t ones, int64_t kW,
-                                       int64_t kH, int64_t dW, int64_t dH, int64_t padW, int64_t padH,
-                                       int64_t dilationW, int64_t dilationH, int64_t groups,
-                                       int64_t deform_groups, int64_t im2col_step);
+DIOPI_API diopiError_t diopiDeformConv(diopiContextHandle_t ctx,
+                                       diopiTensorHandle_t output,
+                                       diopiTensorHandle_t columns,
+                                       diopiTensorHandle_t ones,
+                                       diopiConstTensorHandle_t input,
+                                       diopiConstTensorHandle_t weight,
+                                       diopiConstTensorHandle_t offset,
+                                       int64_t kW,
+                                       int64_t kH,
+                                       int64_t dW,
+                                       int64_t dH,
+                                       int64_t padW,
+                                       int64_t padH,
+                                       int64_t dilationW,
+                                       int64_t dilationH,
+                                       int64_t groups,
+                                       int64_t deform_groups,
+                                       int64_t im2col_step);
 /**
  * @brief Backward function for Deformable 2D convolution(for input and offset).
  * @param[in] ctx diopi context.
  * @param gradOutput  the gradient of ``output``.
- * @param[out] gradInput, gradOffset  the gradient of input tensors ``input`` and ``offset``
+ * @param[out] gradInput, gradOffset  the gradient of input tensors ``input``
+ * and ``offset``
  * @sa definition of other parameters, refer to diopiDeformConv()
  */
-DIOPI_API diopiError_t diopiDeformConvBackwardInput(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t offset, diopiConstTensorHandle_t gradOutput,
-                                                    diopiTensorHandle_t gradInput, diopiTensorHandle_t gradOffset,
-                                                    diopiConstTensorHandle_t weight, diopiConstTensorHandle_t columns, int64_t kW, int64_t kH,
-                                                    int64_t dW, int64_t dH, int64_t padW, int64_t padH,
-                                                    int64_t dilationW, int64_t dilationH, int64_t groups,
-                                                    int64_t deform_groups, int64_t im2col_step);
+DIOPI_API diopiError_t
+diopiDeformConvBackwardInput(diopiContextHandle_t ctx,
+                             diopiTensorHandle_t gradInput,
+                             diopiTensorHandle_t gradOffset,
+                             diopiConstTensorHandle_t input,
+                             diopiConstTensorHandle_t offset,
+                             diopiConstTensorHandle_t gradOutput,
+                             diopiConstTensorHandle_t weight,
+                             diopiConstTensorHandle_t columns,
+                             int64_t kW,
+                             int64_t kH,
+                             int64_t dW,
+                             int64_t dH,
+                             int64_t padW,
+                             int64_t padH,
+                             int64_t dilationW,
+                             int64_t dilationH,
+                             int64_t groups,
+                             int64_t deform_groups,
+                             int64_t im2col_step);
 /**
  * @brief Backward function for Deformable 2D convolution(for weight).
  * @param[in] ctx diopi context.
@@ -1171,56 +1310,96 @@ DIOPI_API diopiError_t diopiDeformConvBackwardInput(diopiContextHandle_t ctx, di
  * @param[out] gradWeight  the gradient of input tensors ``weight``
  * @sa definition of other parameters, refer to diopiDeformConv()
  */
-DIOPI_API diopiError_t diopiDeformConvBackwardParameters(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t offset,
-                                                         diopiTensorHandle_t gradOutput, diopiTensorHandle_t gradWeight,
-                                                         diopiConstTensorHandle_t columns, diopiConstTensorHandle_t ones, int64_t kW,
-                                                         int64_t kH, int64_t dW, int64_t dH, int64_t padW, int64_t padH,
-                                                         int64_t dilationW, int64_t dilationH, int64_t groups,
-                                                         int64_t deform_groups, float scale,
-                                                         int64_t im2col_step);
+DIOPI_API diopiError_t
+diopiDeformConvBackwardParameters(diopiContextHandle_t ctx,
+                                  diopiTensorHandle_t gradOutput,
+                                  diopiTensorHandle_t gradWeight,
+                                  diopiConstTensorHandle_t input,
+                                  diopiConstTensorHandle_t offset,
+                                  diopiConstTensorHandle_t columns,
+                                  diopiConstTensorHandle_t ones,
+                                  int64_t kW,
+                                  int64_t kH,
+                                  int64_t dW,
+                                  int64_t dH,
+                                  int64_t padW,
+                                  int64_t padH,
+                                  int64_t dilationW,
+                                  int64_t dilationH,
+                                  int64_t groups,
+                                  int64_t deform_groups,
+                                  int64_t im2col_step,
+                                  float scale);
 
 /**
  * @brief Deformable RoiPool.
  */
-DIOPI_API diopiError_t diopiDeformRoiPool(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t rois, diopiTensorHandle_t offset,
-                                          diopiTensorHandle_t output, int64_t pooled_height,
-                                          int64_t pooled_width, float spatial_scale,
-                                          int64_t sampling_ratio, float gamma);
-DIOPI_API diopiError_t diopiDeformRoiPoolBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_output, diopiTensorHandle_t input,
-                                                  diopiTensorHandle_t rois, diopiTensorHandle_t offset,
-                                                  diopiTensorHandle_t grad_input, diopiTensorHandle_t grad_offset,
-                                                  int64_t pooled_height, int64_t pooled_width,
-                                                  float spatial_scale, int64_t sampling_ratio,
-                                                  float gamma);
+DIOPI_API diopiError_t diopiDeformRoiPool(diopiContextHandle_t ctx,
+                                          diopiTensorHandle_t input,
+                                          diopiTensorHandle_t rois,
+                                          diopiTensorHandle_t offset,
+                                          diopiTensorHandle_t output,
+                                          int64_t pooled_height,
+                                          int64_t pooled_width,
+                                          int64_t sampling_ratio,
+                                          float spatial_scale,
+                                          float gamma);
+DIOPI_API diopiError_t
+diopiDeformRoiPoolBackward(diopiContextHandle_t ctx,
+                           diopiTensorHandle_t grad_output,
+                           diopiTensorHandle_t input,
+                           diopiTensorHandle_t rois,
+                           diopiTensorHandle_t offset,
+                           diopiTensorHandle_t grad_input,
+                           diopiTensorHandle_t grad_offset,
+                           int64_t pooled_height,
+                           int64_t pooled_width,
+                           int64_t sampling_ratio,
+                           float spatial_scale,
+                           float gamma);
 
 /**
  * @brief SigmoidFocalLoss
  */
-DIOPI_API diopiError_t diopiSigmoidFocalLossMmcv(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t target,
-                                                 diopiTensorHandle_t weight, diopiTensorHandle_t output,
+DIOPI_API diopiError_t diopiSigmoidFocalLossMmcv(diopiContextHandle_t ctx,
+                                                 diopiTensorHandle_t input,
+                                                 diopiTensorHandle_t target,
+                                                 diopiTensorHandle_t weight,
+                                                 diopiTensorHandle_t output,
                                                  float gamma,
                                                  float alpha);
-DIOPI_API diopiError_t diopiSigmoidFocalLossBackwardMmcv(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t target,
-                                                         diopiTensorHandle_t weight,
-                                                         diopiTensorHandle_t grad_input,
-                                                         float gamma,
-                                                         float alpha);
+DIOPI_API diopiError_t
+diopiSigmoidFocalLossBackwardMmcv(diopiContextHandle_t ctx,
+                                  diopiTensorHandle_t input,
+                                  diopiTensorHandle_t target,
+                                  diopiTensorHandle_t weight,
+                                  diopiTensorHandle_t grad_input,
+                                  float gamma,
+                                  float alpha);
 
 /**
  * @brief SoftmaxFocalLoss
  */
-DIOPI_API diopiError_t diopiSoftmaxFocalLoss(diopiContextHandle_t ctx, diopiTensorHandle_t softmax, diopiTensorHandle_t target,
-                                             diopiTensorHandle_t weight, diopiTensorHandle_t output,
+DIOPI_API diopiError_t diopiSoftmaxFocalLoss(diopiContextHandle_t ctx,
+                                             diopiTensorHandle_t softmax,
+                                             diopiTensorHandle_t target,
+                                             diopiTensorHandle_t weight,
+                                             diopiTensorHandle_t output,
                                              float gamma,
                                              float alpha);
-DIOPI_API diopiError_t diopiSoftmaxFocalLossBackward(diopiContextHandle_t ctx, diopiTensorHandle_t softmax, diopiTensorHandle_t target,
-                                                     diopiTensorHandle_t weight, diopiTensorHandle_t buff,
-                                                     diopiTensorHandle_t grad_input,
-                                                     float gamma,
-                                                     float alpha);
+DIOPI_API diopiError_t
+diopiSoftmaxFocalLossBackward(diopiContextHandle_t ctx,
+                              diopiTensorHandle_t softmax,
+                              diopiTensorHandle_t target,
+                              diopiTensorHandle_t weight,
+                              diopiTensorHandle_t buff,
+                              diopiTensorHandle_t grad_input,
+                              float gamma,
+                              float alpha);
 
 /**
- * @brief Uses iterative furthest point sampling to select a set of features whose corresponding points have the furthest distance.
+ * @brief Uses iterative furthest point sampling to select a set of features
+ * whose corresponding points have the furthest distance.
  * @param[in] ctx diopi context.
  * @param points_xyz  (B, N, 3) where N > num_points.
  * @param num_points int: Number of points in the sampled set.
@@ -1230,19 +1409,29 @@ DIOPI_API diopiError_t diopiSoftmaxFocalLossBackward(diopiContextHandle_t ctx, d
  * @param[out] idx_tensor  (B, num_points) indices of the sampled points.
  * @param temp_tensor tmp result tensor for calculations.
  */
-DIOPI_API diopiError_t diopiFurthestPointSampling(diopiContextHandle_t ctx, diopiConstTensorHandle_t points_xyz,
-                                                  diopiTensorHandle_t temp_tensor, diopiTensorHandle_t idx_tensor,
-                                                  int64_t B, int64_t N, int64_t num_points);
+DIOPI_API diopiError_t
+diopiFurthestPointSampling(diopiContextHandle_t ctx,
+                           diopiTensorHandle_t temp_tensor,
+                           diopiTensorHandle_t idx_tensor,
+                           diopiConstTensorHandle_t points_xyz,
+                           int64_t B,
+                           int64_t N,
+                           int64_t num_points);
 /**
- * @brief Uses iterative furthest point sampling to select a set of features whose corresponding points have the furthest distance(with dist version).
+ * @brief Uses iterative furthest point sampling to select a set of features
+ * whose corresponding points have the furthest distance(with dist version).
  * @param[in] ctx diopi context.
  * @param points_dist  (B, N, N) Distance between each point pair.
  * @sa definition of other parameters, refer to diopiFurthestPointSampling()
  */
-DIOPI_API diopiError_t diopiFurthestPointSamplingWithDist(diopiContextHandle_t ctx, diopiConstTensorHandle_t points_dist,
-                                                          diopiTensorHandle_t temp_tensor,
-                                                          diopiTensorHandle_t idx_tensor, int64_t B,
-                                                          int64_t N, int64_t num_points);
+DIOPI_API diopiError_t
+diopiFurthestPointSamplingWithDist(diopiContextHandle_t ctx,
+                                   diopiTensorHandle_t temp_tensor,
+                                   diopiTensorHandle_t idx_tensor,
+                                   diopiConstTensorHandle_t points_dist,
+                                   int64_t B,
+                                   int64_t N,
+                                   int64_t num_points);
 
 /**
  * @brief Calculate second order deviation.
@@ -1250,16 +1439,23 @@ DIOPI_API diopiError_t diopiFurthestPointSamplingWithDist(diopiContextHandle_t c
  * @param input  Input feature map.
  * @param bias (nn.Parameter): The bias from convolution operation.
  * @param refer  empty tensor for calculations.
- * @param scale (float, optional): A scalar to adjust the variance of the feature
-     map. Defaults to 2**0.5.
+ * @param scale (float, optional): A scalar to adjust the variance of the
+ feature map. Defaults to 2**0.5.
  * @param act =3
  * @param grad =0
  * @param alpha negative_slope (float, optional): Same as nn.LeakyRelu.
      Defaults to 0.2. alpha=negative_slope.
  * @param[out] out: Feature map after non-linear activation.
  */
-DIOPI_API diopiError_t diopiFusedBiasLeakyrelu(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t input,
-                                               diopiConstTensorHandle_t bias, diopiConstTensorHandle_t refer, int64_t act, int64_t grad, float alpha, float scale);
+DIOPI_API diopiError_t diopiFusedBiasLeakyrelu(diopiContextHandle_t ctx,
+                                               diopiTensorHandle_t* out,
+                                               diopiConstTensorHandle_t input,
+                                               diopiConstTensorHandle_t bias,
+                                               diopiConstTensorHandle_t refer,
+                                               int64_t act,
+                                               int64_t grad,
+                                               float alpha,
+                                               float scale);
 
 /**
  * @brief Gather points with given index.
@@ -1269,8 +1465,14 @@ DIOPI_API diopiError_t diopiFusedBiasLeakyrelu(diopiContextHandle_t ctx, diopiTe
  * @param b,c,n points (b, c, n) features.
  * @param[out] out  (B, C, M) where M is the number of points.
  */
-DIOPI_API diopiError_t diopiGatherPoints(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiConstTensorHandle_t idx, diopiTensorHandle_t out,
-                                         int64_t b, int64_t c, int64_t n, int64_t npoints);
+DIOPI_API diopiError_t diopiGatherPoints(diopiContextHandle_t ctx,
+                                         diopiTensorHandle_t out,
+                                         diopiConstTensorHandle_t points,
+                                         diopiConstTensorHandle_t idx,
+                                         int64_t b,
+                                         int64_t c,
+                                         int64_t n,
+                                         int64_t npoints);
 /**
  * @brief Backward function for Gather points with given index.
  * @param[in] ctx diopi context.
@@ -1278,14 +1480,22 @@ DIOPI_API diopiError_t diopiGatherPoints(diopiContextHandle_t ctx, diopiConstTen
  * @param[out] grad_points  the gradient of ``points``.
  * @sa definition of other parameters, refer to diopiGatherPoints()
  */
-DIOPI_API diopiError_t diopiGatherPointsBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t idx, diopiTensorHandle_t grad_points,
-                                                 int64_t b, int64_t c, int64_t n, int64_t npoints);
+DIOPI_API diopiError_t
+diopiGatherPointsBackward(diopiContextHandle_t ctx,
+                          diopiTensorHandle_t grad_points,
+                          diopiConstTensorHandle_t grad_out,
+                          diopiConstTensorHandle_t idx,
+                          int64_t b,
+                          int64_t c,
+                          int64_t n,
+                          int64_t npoints);
 
 /**
  * @brief Groups points with a ball query of radius.
  * @param[in] ctx diopi context.
  * @param points features (Tensor): Tensor of features to group, input shape is
-     (B, C, N) or stacked inputs (N1 + N2 ..., C). points=features/features_tensor.
+     (B, C, N) or stacked inputs (N1 + N2 ..., C).
+ points=features/features_tensor.
  * @param idx indices (Tensor):  The indices of features to group with, input
      shape is (B, npoint, nsample) or stacked inputs
      (M1 + M2 ..., nsample). idx=indices.
@@ -1294,8 +1504,15 @@ DIOPI_API diopiError_t diopiGatherPointsBackward(diopiContextHandle_t ctx, diopi
  * @param[out] out Grouped features, the shape is (B, C, npoint, nsample)
      or (M1 + M2 ..., C, nsample).
  */
-DIOPI_API diopiError_t diopiGroupPoints(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiConstTensorHandle_t idx, diopiTensorHandle_t out,
-                                        int64_t b, int64_t c, int64_t n, int64_t npoints, int64_t nsample);
+DIOPI_API diopiError_t diopiGroupPoints(diopiContextHandle_t ctx,
+                                        diopiTensorHandle_t out,
+                                        diopiConstTensorHandle_t points,
+                                        diopiConstTensorHandle_t idx,
+                                        int64_t b,
+                                        int64_t c,
+                                        int64_t n,
+                                        int64_t npoints,
+                                        int64_t nsample);
 /**
  * @brief Backward function for Groups points with a ball query of radius.
  * @param[in] ctx diopi context.
@@ -1303,16 +1520,24 @@ DIOPI_API diopiError_t diopiGroupPoints(diopiContextHandle_t ctx, diopiConstTens
  * @param[out] grad_points the gradient of ``points``.
  * @sa definition of other parameters, refer to diopiGroupPoints()
  */
-DIOPI_API diopiError_t diopiGroupPointsBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t idx, diopiTensorHandle_t grad_points,
-                                                int64_t b, int64_t c, int64_t n, int64_t npoints, int64_t nsample);
+DIOPI_API diopiError_t
+diopiGroupPointsBackward(diopiContextHandle_t ctx,
+                         diopiTensorHandle_t grad_points,
+                         diopiConstTensorHandle_t grad_out,
+                         diopiConstTensorHandle_t idx,
+                         int64_t b,
+                         int64_t c,
+                         int64_t n,
+                         int64_t npoints,
+                         int64_t nsample);
 
 /**
  * @brief Groups points with a ball query of radius(stacked input).
  * @param[in] ctx diopi context.
- * @param features_tensor features (Tensor): Tensor of features to group, stacked input shape
-      (N1 + N2 ..., C). features_tensor=features
- * @param idx_tensor indices (Tensor):  The indices of features to group with, stacked inputs
-      (M1 + M2 ..., nsample). idx_tensor = indices.
+ * @param features_tensor features (Tensor): Tensor of features to group,
+ stacked input shape (N1 + N2 ..., C). features_tensor=features
+ * @param idx_tensor indices (Tensor):  The indices of features to group with,
+ stacked inputs (M1 + M2 ..., nsample). idx_tensor = indices.
  * @param features_batch_cnt_tensor (Tensor, optional): Input features nums in
        each batch, just like (N1, N2, ...). Defaults to None.
        New in version 1.7.0. .
@@ -1325,27 +1550,37 @@ DIOPI_API diopiError_t diopiGroupPointsBackward(diopiContextHandle_t ctx, diopiC
  * @param[out] out_tensor Grouped features, the shape is (B, C, npoint, nsample)
        or (M1 + M2 ..., C, nsample).
  */
-DIOPI_API diopiError_t diopiStackGroupPoints(diopiContextHandle_t ctx,
-                                             diopiConstTensorHandle_t features_tensor,
-                                             diopiConstTensorHandle_t features_batch_cnt_tensor,
-                                             diopiConstTensorHandle_t idx_tensor,
-                                             diopiConstTensorHandle_t idx_batch_cnt_tensor,
-                                             diopiTensorHandle_t out_tensor,
-                                             int64_t b, int64_t c, int64_t m, int64_t nsample);
+DIOPI_API diopiError_t
+diopiStackGroupPoints(diopiContextHandle_t ctx,
+                      diopiTensorHandle_t out_tensor,
+                      diopiConstTensorHandle_t features_tensor,
+                      diopiConstTensorHandle_t features_batch_cnt_tensor,
+                      diopiConstTensorHandle_t idx_tensor,
+                      diopiConstTensorHandle_t idx_batch_cnt_tensor,
+                      int64_t b,
+                      int64_t c,
+                      int64_t m,
+                      int64_t nsample);
 /**
- * @brief Backward function for Groups points with a ball query of radius(stacked input).
+ * @brief Backward function for Groups points with a ball query of
+ * radius(stacked input).
  * @param[in] ctx diopi context.
  * @param grad_out_tensor the gradient of ``out``.
  * @param[out] grad_features_tensor the gradient of ``features_tensor``.
  * @sa definition of other parameters, refer to diopiStackGroupPoints()
  */
-DIOPI_API diopiError_t diopiStackGroupPointsBackward(diopiContextHandle_t ctx,
-                                                     diopiConstTensorHandle_t grad_out_tensor,
-                                                     diopiConstTensorHandle_t idx_tensor,
-                                                     diopiConstTensorHandle_t idx_batch_cnt_tensor,
-                                                     diopiConstTensorHandle_t features_batch_cnt_tensor,
-                                                     diopiTensorHandle_t grad_features_tensor,
-                                                     int64_t b, int64_t c, int64_t m, int64_t n, int64_t nsample);
+DIOPI_API diopiError_t diopiStackGroupPointsBackward(
+    diopiContextHandle_t ctx,
+    diopiTensorHandle_t grad_features_tensor,
+    diopiConstTensorHandle_t grad_out_tensor,
+    diopiConstTensorHandle_t idx_tensor,
+    diopiConstTensorHandle_t idx_batch_cnt_tensor,
+    diopiConstTensorHandle_t features_batch_cnt_tensor,
+    int64_t b,
+    int64_t c,
+    int64_t m,
+    int64_t n,
+    int64_t nsample);
 
 /**
  * @brief Calculate boxes BEV overlap.
@@ -1354,7 +1589,11 @@ DIOPI_API diopiError_t diopiStackGroupPointsBackward(diopiContextHandle_t ctx,
  * @param boxes_b: Input boxes b with shape (N, 7).
  * @param[out] ans_overlap: BEV overlap result with shape (M, N).
  */
-DIOPI_API diopiError_t diopiIou3dBoxesOverlapBev(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes_a, diopiConstTensorHandle_t boxes_b, diopiTensorHandle_t ans_overlap);
+DIOPI_API diopiError_t
+diopiIou3dBoxesOverlapBev(diopiContextHandle_t ctx,
+                          diopiTensorHandle_t ans_overlap,
+                          diopiConstTensorHandle_t boxes_a,
+                          diopiConstTensorHandle_t boxes_b);
 
 /**
  * @brief 3D NMS function GPU implementation (for BEV boxes).
@@ -1365,16 +1604,24 @@ DIOPI_API diopiError_t diopiIou3dBoxesOverlapBev(diopiContextHandle_t ctx, diopi
  * @param[out] keep  Indexes after NMS.
  * @param keep_num  num_out for keep
  */
-DIOPI_API diopiError_t diopiIou3dNms3d(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes, diopiTensorHandle_t keep, diopiTensorHandle_t keep_num, float nms_overlap_thresh);
+DIOPI_API diopiError_t diopiIou3dNms3d(diopiContextHandle_t ctx,
+                                       diopiTensorHandle_t keep,
+                                       diopiTensorHandle_t keep_num,
+                                       diopiConstTensorHandle_t boxes,
+                                       float nms_overlap_thresh);
 
 /**
- * @brief Normal 3D NMS function GPU implementation. The overlap of two boxes for
-          IoU calculation is defined as the exact overlapping area of the two boxes
+ * @brief Normal 3D NMS function GPU implementation. The overlap of two boxes
+ for IoU calculation is defined as the exact overlapping area of the two boxes
           WITH their yaw angle set to 0.
  * @param[in] ctx diopi context.
  * @sa definition of other parameters, refer to diopiIou3dNms3d()
  */
-DIOPI_API diopiError_t diopiIou3dNms3dNormal(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes, diopiTensorHandle_t keep, diopiTensorHandle_t keep_num, float nms_overlap_thresh);
+DIOPI_API diopiError_t diopiIou3dNms3dNormal(diopiContextHandle_t ctx,
+                                             diopiTensorHandle_t keep,
+                                             diopiTensorHandle_t keep_num,
+                                             diopiConstTensorHandle_t boxes,
+                                             float nms_overlap_thresh);
 
 /**
  * @brief KNN based on heap data structure.
@@ -1384,42 +1631,96 @@ DIOPI_API diopiError_t diopiIou3dNms3dNormal(diopiContextHandle_t ctx, diopiCons
  * @param new_xyz_tensor   (B, npoint, 3) if transposed
      is False, else (B, 3, npoint). centers of the knn query.
      Default: None.
- * @param nsample int, number of nearest neighbors. 
+ * @param nsample int, number of nearest neighbors.
  * @param b,n xyz_tensor (b, n, 3)
  * @param m = npoint
  * @param[out] idx_tensor  (B, npoint, k) tensor with the indices of the
      features that form k-nearest neighbours.
  * @param dist2_tensor  (B, npoint, k) distance tensors after calculations.
  */
-DIOPI_API diopiError_t diopiKnn(diopiContextHandle_t ctx, diopiConstTensorHandle_t xyz_tensor, diopiConstTensorHandle_t new_xyz_tensor, diopiTensorHandle_t idx_tensor,
-                                diopiTensorHandle_t dist2_tensor, int64_t b, int64_t n, int64_t m, int64_t nsample);
+DIOPI_API diopiError_t diopiKnn(diopiContextHandle_t ctx,
+                                diopiTensorHandle_t idx_tensor,
+                                diopiTensorHandle_t dist2_tensor,
+                                diopiConstTensorHandle_t xyz_tensor,
+                                diopiConstTensorHandle_t new_xyz_tensor,
+                                int64_t b,
+                                int64_t n,
+                                int64_t m,
+                                int64_t nsample);
 
 /**
- * @brief A MaskedConv2d which inherits the official Conv2d. The masked forward doesn't implement the backward function and only
-    supports the stride parameter to be 1 currently.
+ * @brief A MaskedConv2d which inherits the official Conv2d. The masked forward
+ doesn't implement the backward function and only supports the stride parameter
+ to be 1 currently.
  */
-DIOPI_API diopiError_t diopiMaskedIm2col(diopiContextHandle_t ctx, diopiConstTensorHandle_t im, diopiConstTensorHandle_t mask_h_idx,
-                                         diopiConstTensorHandle_t mask_w_idx, diopiTensorHandle_t col,
-                                         int64_t kernel_h, int64_t kernel_w,
-                                         int64_t pad_h, int64_t pad_w);
-DIOPI_API diopiError_t diopiMaskedCol2im(diopiContextHandle_t ctx, diopiConstTensorHandle_t col, diopiConstTensorHandle_t mask_h_idx,
-                                         diopiConstTensorHandle_t mask_w_idx, diopiTensorHandle_t im, int64_t height,
-                                         int64_t width, int64_t channels);
+DIOPI_API diopiError_t diopiMaskedIm2col(diopiContextHandle_t ctx,
+                                         diopiTensorHandle_t col,
+                                         diopiConstTensorHandle_t im,
+                                         diopiConstTensorHandle_t mask_h_idx,
+                                         diopiConstTensorHandle_t mask_w_idx,
+                                         int64_t kernel_h,
+                                         int64_t kernel_w,
+                                         int64_t pad_h,
+                                         int64_t pad_w);
+DIOPI_API diopiError_t diopiMaskedCol2im(diopiContextHandle_t ctx,
+                                         diopiTensorHandle_t im,
+                                         diopiConstTensorHandle_t col,
+                                         diopiConstTensorHandle_t mask_h_idx,
+                                         diopiConstTensorHandle_t mask_w_idx,
+                                         int64_t height,
+                                         int64_t width,
+                                         int64_t channels);
 
 /**
- * @brief A ModulatedDeformable Conv Encapsulation that acts as normal Conv layers.
+ * @brief A ModulatedDeformable Conv Encapsulation that acts as normal Conv
+ * layers.
  */
-DIOPI_API diopiError_t diopiModulatedDeformConv(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t weight, diopiTensorHandle_t bias, diopiTensorHandle_t ones, diopiTensorHandle_t offset,
-                                                diopiTensorHandle_t mask, diopiTensorHandle_t output, diopiTensorHandle_t columns, int64_t kernel_h, int64_t kernel_w,
-                                                const int64_t stride_h, const int64_t stride_w, const int64_t pad_h, const int64_t pad_w,
-                                                const int64_t dilation_h, const int64_t dilation_w, const int64_t group,
-                                                const int64_t deformable_group, const bool with_bias);
-DIOPI_API diopiError_t diopiModulatedDeformConvBackward(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t weight, diopiTensorHandle_t bias, diopiTensorHandle_t ones, diopiTensorHandle_t offset,
-                                                        diopiTensorHandle_t mask, diopiTensorHandle_t columns, diopiTensorHandle_t grad_input, diopiTensorHandle_t grad_weight,
-                                                        diopiTensorHandle_t grad_bias, diopiTensorHandle_t grad_offset, diopiTensorHandle_t grad_mask, diopiTensorHandle_t grad_output,
-                                                        int64_t kernel_h, int64_t kernel_w, int64_t stride_h, int64_t stride_w, int64_t pad_h,
-                                                        int64_t pad_w, int64_t dilation_h, int64_t dilation_w, int64_t group, int64_t deformable_group,
-                                                        const bool with_bias);
+DIOPI_API diopiError_t diopiModulatedDeformConv(diopiContextHandle_t ctx,
+                                                diopiTensorHandle_t input,
+                                                diopiTensorHandle_t weight,
+                                                diopiTensorHandle_t bias,
+                                                diopiTensorHandle_t ones,
+                                                diopiTensorHandle_t offset,
+                                                diopiTensorHandle_t mask,
+                                                diopiTensorHandle_t output,
+                                                diopiTensorHandle_t columns,
+                                                int64_t kernel_h,
+                                                int64_t kernel_w,
+                                                const int64_t stride_h,
+                                                const int64_t stride_w,
+                                                const int64_t pad_h,
+                                                const int64_t pad_w,
+                                                const int64_t dilation_h,
+                                                const int64_t dilation_w,
+                                                const int64_t group,
+                                                const int64_t deformable_group,
+                                                const bool with_bias);
+DIOPI_API diopiError_t
+diopiModulatedDeformConvBackward(diopiContextHandle_t ctx,
+                                 diopiTensorHandle_t input,
+                                 diopiTensorHandle_t weight,
+                                 diopiTensorHandle_t bias,
+                                 diopiTensorHandle_t ones,
+                                 diopiTensorHandle_t offset,
+                                 diopiTensorHandle_t mask,
+                                 diopiTensorHandle_t columns,
+                                 diopiTensorHandle_t grad_input,
+                                 diopiTensorHandle_t grad_weight,
+                                 diopiTensorHandle_t grad_bias,
+                                 diopiTensorHandle_t grad_offset,
+                                 diopiTensorHandle_t grad_mask,
+                                 diopiTensorHandle_t grad_output,
+                                 int64_t kernel_h,
+                                 int64_t kernel_w,
+                                 int64_t stride_h,
+                                 int64_t stride_w,
+                                 int64_t pad_h,
+                                 int64_t pad_w,
+                                 int64_t dilation_h,
+                                 int64_t dilation_w,
+                                 int64_t group,
+                                 int64_t deformable_group,
+                                 const bool with_bias);
 
 /**
  * @brief An attention module used in Deformable-Detr.
@@ -1428,38 +1729,51 @@ DIOPI_API diopiError_t diopiModulatedDeformConvBackward(diopiContextHandle_t ctx
      (bs, num_keys, mum_heads, embed_dims//num_heads)
  * @param spatial_shapes  Spatial shape of
      each feature map, has shape (num_levels, 2),
-     last dimension 2 represent (h, w). 
+     last dimension 2 represent (h, w).
  * @param level_start_index: level_start_index input tensor.
  * @param sampling_loc   The location of sampling points,
      has shape (bs ,num_queries, num_heads, num_levels, num_points, 2),
-     the last dimension 2 represent (x, y). 
+     the last dimension 2 represent (x, y).
  * @param attn_weight  The weight of sampling points
      used when calculate the attention, has shape
      (bs ,num_queries, num_heads, num_levels, num_points).
  * @param im2col_step   The step used in image to column.
- * @param[out] out  attention module out which has shape (bs, num_queries, embed_dims)
+ * @param[out] out  attention module out which has shape (bs, num_queries,
+ embed_dims)
  */
-DIOPI_API diopiError_t diopiMsDeformAttn(diopiContextHandle_t ctx, diopiTensorHandle_t* out,
-                                         diopiConstTensorHandle_t value,
-                                         diopiConstTensorHandle_t spatial_shapes,
-                                         diopiConstTensorHandle_t level_start_index,
-                                         diopiConstTensorHandle_t sampling_loc,
-                                         diopiConstTensorHandle_t attn_weight,
-                                         int64_t im2col_step);
+DIOPI_API diopiError_t
+diopiMsDeformAttn(diopiContextHandle_t ctx,
+                  diopiTensorHandle_t* out,
+                  diopiConstTensorHandle_t value,
+                  diopiConstTensorHandle_t spatial_shapes,
+                  diopiConstTensorHandle_t level_start_index,
+                  diopiConstTensorHandle_t sampling_loc,
+                  diopiConstTensorHandle_t attn_weight,
+                  int64_t im2col_step);
 /**
  * @brief Backward function for An attention module used in Deformable-Detr.
  * @param[in] ctx diopi context.
  * @param grad_output  the gradient of ``out``.
- * @param[out] grad_value,grad_sampling_loc,grad_attn_weight  the gradient of ``value``,``sampling_loc``,``attn_weight``.
+ * @param[out] grad_value,grad_sampling_loc,grad_attn_weight  the gradient of
+ * ``value``,``sampling_loc``,``attn_weight``.
  * @sa definition of other parameters, refer to diopiMsDeformAttn()
  */
-DIOPI_API diopiError_t diopiMsDeformAttnBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t value, diopiConstTensorHandle_t spatial_shapes,
-                                                 diopiConstTensorHandle_t level_start_index, diopiConstTensorHandle_t sampling_loc,
-                                                 diopiConstTensorHandle_t attn_weight, diopiConstTensorHandle_t grad_output, diopiTensorHandle_t grad_value,
-                                                 diopiTensorHandle_t grad_sampling_loc, diopiTensorHandle_t grad_attn_weight, int64_t im2col_step);
+DIOPI_API diopiError_t
+diopiMsDeformAttnBackward(diopiContextHandle_t ctx,
+                          diopiTensorHandle_t grad_value,
+                          diopiTensorHandle_t grad_sampling_loc,
+                          diopiTensorHandle_t grad_attn_weight,
+                          diopiConstTensorHandle_t value,
+                          diopiConstTensorHandle_t spatial_shapes,
+                          diopiConstTensorHandle_t level_start_index,
+                          diopiConstTensorHandle_t sampling_loc,
+                          diopiConstTensorHandle_t attn_weight,
+                          diopiConstTensorHandle_t grad_output,
+                          int64_t im2col_step);
 
 /**
- * @brief NMS from mmcv. This function is modified from: https://github.com/pytorch/vision/
+ * @brief NMS from mmcv. This function is modified from:
+ * https://github.com/pytorch/vision/
  * @param[in] ctx diopi context.
  * @param dets boxes boxes in shape (N, 4). dets=boxes.
  * @param scores scores in shape (N, ).
@@ -1467,11 +1781,16 @@ DIOPI_API diopiError_t diopiMsDeformAttnBackward(diopiContextHandle_t ctx, diopi
  * @param offset (int, 0 or 1): boxes' width or height is (x2 - x1 + offset).
  * @param[out] out indice, which always have the same data type as the input.
  */
-DIOPI_API diopiError_t diopiNmsMmcv(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t dets,
-                                    diopiConstTensorHandle_t scores, double iou_threshold, int64_t offset);
+DIOPI_API diopiError_t diopiNmsMmcv(diopiContextHandle_t ctx,
+                                    diopiTensorHandle_t* out,
+                                    diopiConstTensorHandle_t dets,
+                                    diopiConstTensorHandle_t scores,
+                                    double iou_threshold,
+                                    int64_t offset);
 
 /**
- * @brief Performs non-maximum suppression (NMS) on the rotated boxes according to their intersection-over-union (IoU).
+ * @brief Performs non-maximum suppression (NMS) on the rotated boxes according
+ to their intersection-over-union (IoU).
  * @param[in] ctx diopi context.
  * @param dets Rotated boxes in shape (N, 5). They are expected to be in
      (x_ctr, y_ctr, width, height, angle_radian) format.
@@ -1481,9 +1800,14 @@ DIOPI_API diopiError_t diopiNmsMmcv(diopiContextHandle_t ctx, diopiTensorHandle_
  * @param multi_label  boxes' label in shape (N,).
  * @param out indice, which is always the same data type as the input.
  */
-DIOPI_API diopiError_t diopiNmsRotated(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t dets,
-                                       diopiConstTensorHandle_t scores, diopiConstTensorHandle_t order_t, diopiConstTensorHandle_t dets_sorted,
-                                       double iou_threshold, int64_t multi_label);
+DIOPI_API diopiError_t diopiNmsRotated(diopiContextHandle_t ctx,
+                                       diopiTensorHandle_t* out,
+                                       diopiConstTensorHandle_t dets,
+                                       diopiConstTensorHandle_t scores,
+                                       diopiConstTensorHandle_t order_t,
+                                       diopiConstTensorHandle_t dets_sorted,
+                                       double iou_threshold,
+                                       int64_t multi_label);
 
 /**
  * @brief Find the box in which each point is(Part).
@@ -1492,10 +1816,14 @@ DIOPI_API diopiError_t diopiNmsRotated(diopiContextHandle_t ctx, diopiTensorHand
  * @param boxes   [B, T, 7],
      num_valid_boxes <= T, [x, y, z, x_size, y_size, z_size, rz] in
      LiDAR/DEPTH coordinate, (x, y, z) is the bottom center.
- * @param[out] box_idx_of_points  Return the box indices of points with the shape of
-     (B, M). Default background = -1.
+ * @param[out] box_idx_of_points  Return the box indices of points with the
+ shape of (B, M). Default background = -1.
  */
-DIOPI_API diopiError_t diopiPointsInBoxesPart(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes, diopiConstTensorHandle_t pts, diopiTensorHandle_t box_idx_of_points);
+DIOPI_API diopiError_t
+diopiPointsInBoxesPart(diopiContextHandle_t ctx,
+                       diopiTensorHandle_t box_idx_of_points,
+                       diopiConstTensorHandle_t boxes,
+                       diopiConstTensorHandle_t pts);
 /**
  * @brief Find the box in which each point is(All).
  * @param[in] ctx diopi context.
@@ -1503,46 +1831,80 @@ DIOPI_API diopiError_t diopiPointsInBoxesPart(diopiContextHandle_t ctx, diopiCon
  * @param boxes   [B, T, 7],
      num_valid_boxes <= T, [x, y, z, x_size, y_size, z_size, rz] in
      LiDAR/DEPTH coordinate, (x, y, z) is the bottom center.
- * @param[out] box_idx_of_points  Return the box indices of points with the shape of
-     (B, M). Default background = -1.
+ * @param[out] box_idx_of_points  Return the box indices of points with the
+ shape of (B, M). Default background = -1.
  */
-DIOPI_API diopiError_t diopiPointsInBoxesAll(diopiContextHandle_t ctx, diopiConstTensorHandle_t boxes, diopiConstTensorHandle_t pts, diopiTensorHandle_t box_idx_of_points);
+DIOPI_API diopiError_t
+diopiPointsInBoxesAll(diopiContextHandle_t ctx,
+                      diopiTensorHandle_t box_idx_of_points,
+                      diopiConstTensorHandle_t boxes,
+                      diopiConstTensorHandle_t pts);
 
 /**
- * @brief Psamask. Modified from https://github.com/hszhao/semseg/blob/master/lib/psa
+ * @brief Psamask. Modified from
+ * https://github.com/hszhao/semseg/blob/master/lib/psa
  */
-DIOPI_API diopiError_t diopiPsamask(diopiContextHandle_t ctx, int64_t psa_type, diopiConstTensorHandle_t input, diopiTensorHandle_t output,
-                                    int64_t num_, int64_t h_feature,
-                                    int64_t w_feature, int64_t h_mask,
-                                    int64_t w_mask, int64_t half_h_mask,
+DIOPI_API diopiError_t diopiPsamask(diopiContextHandle_t ctx,
+                                    diopiTensorHandle_t output,
+                                    diopiConstTensorHandle_t input,
+                                    int64_t psa_type,
+                                    int64_t num_,
+                                    int64_t h_feature,
+                                    int64_t w_feature,
+                                    int64_t h_mask,
+                                    int64_t w_mask,
+                                    int64_t half_h_mask,
                                     int64_t half_w_mask);
-DIOPI_API diopiError_t diopiPsamaskBackward(diopiContextHandle_t ctx, int64_t psa_type, diopiConstTensorHandle_t grad_output,
-                                            diopiTensorHandle_t grad_input, int64_t num_,
-                                            int64_t h_feature, int64_t w_feature,
-                                            int64_t h_mask, int64_t w_mask,
-                                            int64_t half_h_mask, int64_t half_w_mask);
+DIOPI_API diopiError_t
+diopiPsamaskBackward(diopiContextHandle_t ctx,
+                     diopiTensorHandle_t grad_input,
+                     diopiConstTensorHandle_t grad_output,
+                     int64_t psa_type,
+                     int64_t num_,
+                     int64_t h_feature,
+                     int64_t w_feature,
+                     int64_t h_mask,
+                     int64_t w_mask,
+                     int64_t half_h_mask,
+                     int64_t half_w_mask);
 
 /**
  * @brief RoI align pooling layer.
  */
-DIOPI_API diopiError_t diopiRoiAlignMmcv(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t rois, diopiTensorHandle_t output,
-                                         diopiTensorHandle_t argmax_y, diopiTensorHandle_t argmax_x,
-                                         int64_t aligned_height, int64_t aligned_width,
-                                         float spatial_scale, int64_t sampling_ratio,
-                                         int64_t pool_mode, bool aligned);
-DIOPI_API diopiError_t diopiRoiAlignBackwardMmcv(diopiContextHandle_t ctx, diopiTensorHandle_t grad_output, diopiTensorHandle_t rois, diopiTensorHandle_t argmax_y,
-                                                 diopiTensorHandle_t argmax_x, diopiTensorHandle_t grad_input,
-                                                 int64_t aligned_height, int64_t aligned_width,
-                                                 float spatial_scale, int64_t sampling_ratio,
-                                                 int64_t pool_mode, bool aligned);
+DIOPI_API diopiError_t diopiRoiAlignMmcv(diopiContextHandle_t ctx,
+                                         diopiTensorHandle_t input,
+                                         diopiTensorHandle_t rois,
+                                         diopiTensorHandle_t output,
+                                         diopiTensorHandle_t argmax_y,
+                                         diopiTensorHandle_t argmax_x,
+                                         int64_t aligned_height,
+                                         int64_t aligned_width,
+                                         int64_t sampling_ratio,
+                                         int64_t pool_mode,
+                                         float spatial_scale,
+                                         bool aligned);
+DIOPI_API diopiError_t
+diopiRoiAlignBackwardMmcv(diopiContextHandle_t ctx,
+                          diopiTensorHandle_t grad_output,
+                          diopiTensorHandle_t rois,
+                          diopiTensorHandle_t argmax_y,
+                          diopiTensorHandle_t argmax_x,
+                          diopiTensorHandle_t grad_input,
+                          int64_t aligned_height,
+                          int64_t aligned_width,
+                          int64_t sampling_ratio,
+                          int64_t pool_mode,
+                          float spatial_scale,
+                          bool aligned);
 
 /**
  * @brief RoI align pooling layer for rotated proposals for mmcv.
  * @param[in] ctx diopi context.
  * @param input  a feature map of shape (N, C, H, W)
- * @param rois  rois with shape (n, 6) with each roi decoded as (batch_index, center_x, center_y,
-     w, h, angle). The angle is in radian.
- * @param aligned_height,aligned_width  output_size (tuple): h, w. aligned_height=output_size[0], aligned_width=output_size[1]
+ * @param rois  rois with shape (n, 6) with each roi decoded as (batch_index,
+ center_x, center_y, w, h, angle). The angle is in radian.
+ * @param aligned_height,aligned_width  output_size (tuple): h, w.
+ aligned_height=output_size[0], aligned_width=output_size[1]
  * @param spatial_scale float: scale the input boxes by this number
  * @param sampling_ratio int  number of inputs samples to take for each
      output sample. 0 to take samples densely for current models.
@@ -1554,30 +1916,44 @@ DIOPI_API diopiError_t diopiRoiAlignBackwardMmcv(diopiContextHandle_t ctx, diopi
      counterclockwise. Default: False.
  * @param[out] output  RoI align pooling layer output.
  */
-DIOPI_API diopiError_t diopiRoiAlignRotated(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t rois, diopiTensorHandle_t output,
-                                            int64_t aligned_height, int64_t aligned_width,
-                                            float spatial_scale, int64_t sampling_ratio,
-                                            bool aligned, bool clockwise);
+DIOPI_API diopiError_t diopiRoiAlignRotated(diopiContextHandle_t ctx,
+                                            diopiTensorHandle_t output,
+                                            diopiConstTensorHandle_t input,
+                                            diopiConstTensorHandle_t rois,
+                                            int64_t aligned_height,
+                                            int64_t aligned_width,
+                                            int64_t sampling_ratio,
+                                            float spatial_scale,
+                                            bool aligned,
+                                            bool clockwise);
 /**
- * @brief Backward function for RoI align pooling layer for rotated proposals for mmcv.
+ * @brief Backward function for RoI align pooling layer for rotated proposals
+ * for mmcv.
  * @param[in] ctx diopi context.
  * @param top_grad   the gradient of ``output``.
  * @param[out] bottom_grad   the gradient of ``input``.
  * @sa definition of other parameters, refer to diopiRoiAlignRotated()
  */
-DIOPI_API diopiError_t diopiRoiAlignRotatedBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t top_grad, diopiConstTensorHandle_t rois,
-                                                    diopiTensorHandle_t bottom_grad, int64_t aligned_height,
-                                                    int64_t aligned_width, float spatial_scale,
-                                                    int64_t sampling_ratio, bool aligned,
-                                                    bool clockwise);
+DIOPI_API diopiError_t
+diopiRoiAlignRotatedBackward(diopiContextHandle_t ctx,
+                             diopiTensorHandle_t bottom_grad,
+                             diopiConstTensorHandle_t top_grad,
+                             diopiConstTensorHandle_t rois,
+                             int64_t aligned_height,
+                             int64_t aligned_width,
+                             int64_t sampling_ratio,
+                             float spatial_scale,
+                             bool aligned,
+                             bool clockwise);
 
 /**
  * @brief Rotation-invariant RoI align pooling layer for rotated proposals.
  * @param[in] ctx diopi context.
  * @param features input a feature map of shape (N, C, H, W) features=input
- * @param rois rois with shape (n, 6) with each roi decoded as (batch_index, center_x, center_y,
-     w, h, angle). The angle is in radian.
- * @param pooled_height,pooled_width out_size (tuple): fixed dimensional RoI output with shape (h, w). pooled_height=h, pooled_width=w
+ * @param rois rois with shape (n, 6) with each roi decoded as (batch_index,
+ center_x, center_y, w, h, angle). The angle is in radian.
+ * @param pooled_height,pooled_width out_size (tuple): fixed dimensional RoI
+ output with shape (h, w). pooled_height=h, pooled_width=w
  * @param spatial_scale float: scale the input boxes by this number
  * @param num_samples int: number of inputs samples to take for each
      output sample. 0 to take samples densely for current models.
@@ -1587,23 +1963,35 @@ DIOPI_API diopiError_t diopiRoiAlignRotatedBackward(diopiContextHandle_t ctx, di
      counterclockwise. Default: False.
  * @param[out] output Rotation-invariant RoI align pooling layer output.
  */
-DIOPI_API diopiError_t diopiRiroiAlignRotated(diopiContextHandle_t ctx, diopiConstTensorHandle_t features, diopiConstTensorHandle_t rois,
-                                              diopiTensorHandle_t output, int64_t pooled_height,
-                                              int64_t pooled_width, float spatial_scale,
-                                              int64_t num_samples, int64_t num_orientations,
+DIOPI_API diopiError_t diopiRiroiAlignRotated(diopiContextHandle_t ctx,
+                                              diopiTensorHandle_t output,
+                                              diopiConstTensorHandle_t features,
+                                              diopiConstTensorHandle_t rois,
+                                              int64_t pooled_height,
+                                              int64_t pooled_width,
+                                              int64_t num_samples,
+                                              int64_t num_orientations,
+                                              float spatial_scale,
                                               bool clockwise);
 /**
- * @brief Backward function for Rotation-invariant RoI align pooling layer for rotated proposals.
+ * @brief Backward function for Rotation-invariant RoI align pooling layer for
+ * rotated proposals.
  * @param[in] ctx diopi context.
  * @param top_grad   the gradient of ``output``.
  * @param[out] bottom_grad   the gradient of ``features``.
  * @sa definition of other parameters, refer to diopiRiroiAlignRotated()
  */
-DIOPI_API diopiError_t diopiRiroiAlignRotatedBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t top_grad, diopiConstTensorHandle_t rois,
-                                                      diopiTensorHandle_t bottom_grad, int64_t pooled_height,
-                                                      int64_t pooled_width, float spatial_scale,
-                                                      int64_t num_samples, int64_t num_orientations,
-                                                      bool clockwise);
+DIOPI_API diopiError_t
+diopiRiroiAlignRotatedBackward(diopiContextHandle_t ctx,
+                               diopiTensorHandle_t bottom_grad,
+                               diopiConstTensorHandle_t top_grad,
+                               diopiConstTensorHandle_t rois,
+                               int64_t pooled_height,
+                               int64_t pooled_width,
+                               int64_t num_samples,
+                               int64_t num_orientations,
+                               float spatial_scale,
+                               bool clockwise);
 
 /**
  * @brief Encode the geometry-specific features of each 3D proposal.
@@ -1612,76 +2000,117 @@ DIOPI_API diopiError_t diopiRiroiAlignRotatedBackward(diopiContextHandle_t ctx, 
          (x, y, z) is the bottom center of rois.
  * @param pts : [npoints, 3], coordinates of input points.
  * @param pts_feature : [npoints, C], features of input points.
- * @param pool_method int: Pooling method of RoIAware, 0 (max pool) or 1 (average
-     pool).
- * @param[out] pooled_features: Pooled features whose shape is [N, out_x, out_y, out_z, C].
+ * @param pool_method int: Pooling method of RoIAware, 0 (max pool) or 1
+ (average pool).
+ * @param[out] pooled_features: Pooled features whose shape is [N, out_x, out_y,
+ out_z, C].
  * @param argmax, pts_idx_of_voxels: used in backward function.
  */
-DIOPI_API diopiError_t diopiRoiawarePool3d(diopiContextHandle_t ctx, diopiConstTensorHandle_t rois,
-                                           diopiConstTensorHandle_t pts, diopiConstTensorHandle_t pts_feature,
-                                           diopiTensorHandle_t argmax, diopiTensorHandle_t pts_idx_of_voxels,
-                                           diopiTensorHandle_t pooled_features, int64_t pool_method);
+DIOPI_API diopiError_t
+diopiRoiawarePool3d(diopiContextHandle_t ctx,
+                    diopiTensorHandle_t argmax,
+                    diopiTensorHandle_t pts_idx_of_voxels,
+                    diopiTensorHandle_t pooled_features,
+                    diopiConstTensorHandle_t rois,
+                    diopiConstTensorHandle_t pts,
+                    diopiConstTensorHandle_t pts_feature,
+                    int64_t pool_method);
 /**
- * @brief Backward function for Encode the geometry-specific features of each 3D proposal.
+ * @brief Backward function for Encode the geometry-specific features of each 3D
+ * proposal.
  * @param[in] ctx diopi context.
  * @param grad_out   the gradient of ``pooled_features``.
  * @param[out] grad_in   the gradient of ``pts_feature``.
  * @sa definition of other parameters, refer to diopiRoiawarePool3d()
  */
-DIOPI_API diopiError_t diopiRoiawarePool3dBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t pts_idx_of_voxels,
-                                                   diopiConstTensorHandle_t argmax, diopiConstTensorHandle_t grad_out,
-                                                   diopiTensorHandle_t grad_in, int64_t pool_method);
+DIOPI_API diopiError_t
+diopiRoiawarePool3dBackward(diopiContextHandle_t ctx,
+                            diopiTensorHandle_t grad_in,
+                            diopiConstTensorHandle_t pts_idx_of_voxels,
+                            diopiConstTensorHandle_t argmax,
+                            diopiConstTensorHandle_t grad_out,
+                            int64_t pool_method);
 
 /**
  * @brief Encode the geometry-specific features of each 3D proposal.
  * @param[in] ctx diopi context.
- * @param xyz   Input points whose shape is (B, N, C). 
+ * @param xyz   Input points whose shape is (B, N, C).
  * @param pts_feature  Features of input points whose shape
-      is (B, N, C). 
+      is (B, N, C).
  * @param boxes3d (B, M, 7), Input bounding boxes whose shape is (B, M, 7).
- * @param[out] pooled_features, pooled_empty_flag A tuple contains two elements. The first one
-      is the pooled features whose shape is (B, M, 512, 3 + C). The
+ * @param[out] pooled_features, pooled_empty_flag A tuple contains two elements.
+ The first one is the pooled features whose shape is (B, M, 512, 3 + C). The
       second is an empty flag whose shape is (B, M).
  */
-DIOPI_API diopiError_t diopiRoipointPool3d(diopiContextHandle_t ctx, diopiConstTensorHandle_t xyz, diopiConstTensorHandle_t boxes3d,
-                                           diopiConstTensorHandle_t pts_feature, diopiTensorHandle_t pooled_features, diopiTensorHandle_t pooled_empty_flag);
+DIOPI_API diopiError_t
+diopiRoipointPool3d(diopiContextHandle_t ctx,
+                    diopiTensorHandle_t pooled_features,
+                    diopiTensorHandle_t pooled_empty_flag,
+                    diopiConstTensorHandle_t xyz,
+                    diopiConstTensorHandle_t boxes3d,
+                    diopiConstTensorHandle_t pts_feature);
 
 /**
  * @brief RoiPool.
  */
-DIOPI_API diopiError_t diopiRoiPool(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t rois, diopiTensorHandle_t output,
-                                    diopiTensorHandle_t argmax, int64_t pooled_height, int64_t pooled_width,
+DIOPI_API diopiError_t diopiRoiPool(diopiContextHandle_t ctx,
+                                    diopiTensorHandle_t input,
+                                    diopiTensorHandle_t rois,
+                                    diopiTensorHandle_t output,
+                                    diopiTensorHandle_t argmax,
+                                    int64_t pooled_height,
+                                    int64_t pooled_width,
                                     float spatial_scale);
-DIOPI_API diopiError_t diopiRoiPoolBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_output, diopiTensorHandle_t rois, diopiTensorHandle_t argmax,
-                                            diopiTensorHandle_t grad_input, int64_t pooled_height,
-                                            int64_t pooled_width, float spatial_scale);
+DIOPI_API diopiError_t diopiRoiPoolBackward(diopiContextHandle_t ctx,
+                                            diopiTensorHandle_t grad_output,
+                                            diopiTensorHandle_t rois,
+                                            diopiTensorHandle_t argmax,
+                                            diopiTensorHandle_t grad_input,
+                                            int64_t pooled_height,
+                                            int64_t pooled_width,
+                                            float spatial_scale);
 
 /**
- * @brief Scatters points into voxels, used in the voxel encoder with dynamic voxelization.
+ * @brief Scatters points into voxels, used in the voxel encoder with dynamic
+ * voxelization.
  */
-DIOPI_API diopiError_t diopiDynamicPointToVoxel(diopiContextHandle_t ctx, diopiTensorHandle_t* outlist, diopiConstTensorHandle_t feats, diopiConstTensorHandle_t coors,
+DIOPI_API diopiError_t diopiDynamicPointToVoxel(diopiContextHandle_t ctx,
+                                                diopiTensorHandle_t* outlist,
+                                                diopiConstTensorHandle_t feats,
+                                                diopiConstTensorHandle_t coors,
                                                 int64_t reduce_type);
-DIOPI_API diopiError_t diopiDynamicPointToVoxelBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_feats, diopiConstTensorHandle_t grad_reduced_feats,
-                                                        diopiConstTensorHandle_t feats, diopiConstTensorHandle_t reduced_feats,
-                                                        diopiConstTensorHandle_t coors_idx, diopiConstTensorHandle_t reduce_count,
-                                                        int64_t reduce_type);
+DIOPI_API diopiError_t
+diopiDynamicPointToVoxelBackward(diopiContextHandle_t ctx,
+                                 diopiTensorHandle_t grad_feats,
+                                 diopiConstTensorHandle_t grad_reduced_feats,
+                                 diopiConstTensorHandle_t feats,
+                                 diopiConstTensorHandle_t reduced_feats,
+                                 diopiConstTensorHandle_t coors_idx,
+                                 diopiConstTensorHandle_t reduce_count,
+                                 int64_t reduce_type);
 
 /**
  * @brief Synchronized Batch Normalization.
  * @param[in] ctx diopi context.
  * @param input input feature.
- * @param[out] mean initialized as zeros tensors. mean feature tensor calculated from diopiSyncBnMean().
+ * @param[out] mean initialized as zeros tensors. mean feature tensor calculated
+ * from diopiSyncBnMean().
  */
-DIOPI_API diopiError_t diopiSyncBnMean(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiTensorHandle_t mean);
+DIOPI_API diopiError_t diopiSyncBnMean(diopiContextHandle_t ctx,
+                                       diopiTensorHandle_t mean,
+                                       diopiConstTensorHandle_t input);
 /**
  * @brief Synchronized Batch Normalization.
  * @param[in] ctx diopi context.
  * @param input,mean  input featire.
- * @param[out] var initialized as zeros tensors. var feature tensor calculated from diopiSyncBnVar() after diopiSyncBnMean().
+ * @param[out] var initialized as zeros tensors. var feature tensor calculated
+ * from diopiSyncBnVar() after diopiSyncBnMean().
  * @sa definition of other parameters, refer to diopiSyncBnMean()
  */
-DIOPI_API diopiError_t diopiSyncBnVar(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t mean,
-                                      diopiTensorHandle_t var);
+DIOPI_API diopiError_t diopiSyncBnVar(diopiContextHandle_t ctx,
+                                      diopiTensorHandle_t var,
+                                      diopiConstTensorHandle_t input,
+                                      diopiConstTensorHandle_t mean);
 /**
  * @brief Synchronized Batch Normalization.
  * @param[in] ctx diopi context.
@@ -1691,73 +2120,122 @@ DIOPI_API diopiError_t diopiSyncBnVar(diopiContextHandle_t ctx, diopiConstTensor
  * @param momentum (float, optional): the value used for the running_mean and
      running_var computation. Defaults to 0.1.
  * @param group_size  group_size.
- * @param[out] norm,std  initialized as zeros tensors. feature tensor calculated from diopiSyncBnOutput() after diopiSyncBnMean() and iopiSyncBnVar().
- * @param running_mean,running_var calculated mean and var during forward function.
+ * @param[out] norm,std  initialized as zeros tensors. feature tensor calculated
+ from diopiSyncBnOutput() after diopiSyncBnMean() and iopiSyncBnVar().
+ * @param running_mean,running_var calculated mean and var during forward
+ function.
  * @param output  Synchronized Batch Normalization output tensor.
- * @sa definition of other parameters, refer to diopiSyncBnMean(), diopiSyncBnMean().
+ * @sa definition of other parameters, refer to diopiSyncBnMean(),
+ diopiSyncBnMean().
  */
-DIOPI_API diopiError_t diopiSyncBnOutput(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t mean,
-                                         diopiConstTensorHandle_t var, diopiTensorHandle_t running_mean,
-                                         diopiTensorHandle_t running_var, diopiConstTensorHandle_t weight,
-                                         diopiConstTensorHandle_t bias, diopiTensorHandle_t norm, diopiTensorHandle_t std,
-                                         diopiTensorHandle_t output, float eps, float momentum, int64_t group_size);
+DIOPI_API diopiError_t diopiSyncBnOutput(diopiContextHandle_t ctx,
+                                         diopiTensorHandle_t running_mean,
+                                         diopiTensorHandle_t running_var,
+                                         diopiTensorHandle_t norm,
+                                         diopiTensorHandle_t std,
+                                         diopiTensorHandle_t output,
+                                         diopiConstTensorHandle_t input,
+                                         diopiConstTensorHandle_t mean,
+                                         diopiConstTensorHandle_t var,
+                                         diopiConstTensorHandle_t weight,
+                                         diopiConstTensorHandle_t bias,
+                                         float eps,
+                                         float momentum,
+                                         int64_t group_size);
 /**
- * @brief Backward function for Synchronized Batch Normalization(grad for param).
+ * @brief Backward function for Synchronized Batch Normalization(grad for
+ * param).
  * @param[in] ctx diopi context.
  * @param grad_output  the gradient of ``output``.
  * @param[out] grad_weight the gradient of ``weight``.
  * @param grad_bias  the gradient of ``bias``.
  * @sa definition of other parameters, refer to diopiSyncBnOutput().
  */
-DIOPI_API diopiError_t diopiSyncBnBackwardParam(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t norm,
-                                                diopiTensorHandle_t grad_weight, diopiTensorHandle_t grad_bias);
+DIOPI_API diopiError_t
+diopiSyncBnBackwardParam(diopiContextHandle_t ctx,
+                         diopiTensorHandle_t grad_weight,
+                         diopiTensorHandle_t grad_bias,
+                         diopiConstTensorHandle_t grad_output,
+                         diopiConstTensorHandle_t norm);
 /**
- * @brief Backward function for Synchronized Batch Normalization(grad for input).
+ * @brief Backward function for Synchronized Batch Normalization(grad for
+ * input).
  * @param[in] ctx diopi context.
  * @param[out] grad_input the gradient of ``input``.
- * @sa definition of other parameters, refer to diopiSyncBnMean(), diopiSyncBnOutput().
+ * @sa definition of other parameters, refer to diopiSyncBnMean(),
+ * diopiSyncBnOutput().
  */
-DIOPI_API diopiError_t diopiSyncBnBackwardData(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t weight,
-                                               diopiConstTensorHandle_t grad_weight, diopiConstTensorHandle_t grad_bias, diopiConstTensorHandle_t norm,
-                                               diopiConstTensorHandle_t std, diopiTensorHandle_t grad_input);
+DIOPI_API diopiError_t
+diopiSyncBnBackwardData(diopiContextHandle_t ctx,
+                        diopiTensorHandle_t grad_input,
+                        diopiConstTensorHandle_t grad_output,
+                        diopiConstTensorHandle_t weight,
+                        diopiConstTensorHandle_t grad_weight,
+                        diopiConstTensorHandle_t grad_bias,
+                        diopiConstTensorHandle_t norm,
+                        diopiConstTensorHandle_t std);
 
 /**
  * @brief Performs weighted linear interpolation on 3 features.
  * @param[in] ctx diopi context.
  * @param points   (B, C, M) Features descriptors to be
-     interpolated. 
+     interpolated.
  * @param idx   (B, n, 3) indices of three nearest
-     neighbor features for the target features. 
+     neighbor features for the target features.
  * @param weight  (B, n, 3) weights of three nearest
      neighbor features for the target features.
- * @param b,c,n,m  points   (b, c, m)  idx  (b, n, 3) 
+ * @param b,c,n,m  points   (b, c, m)  idx  (b, n, 3)
  * @param[out] out (B, C, N) tensor of the interpolated features
  */
-DIOPI_API diopiError_t diopiThreeInterpolate(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiConstTensorHandle_t idx,
-                                             diopiConstTensorHandle_t weight, diopiTensorHandle_t out, int64_t b, int64_t c, int64_t m, int64_t n);
+DIOPI_API diopiError_t diopiThreeInterpolate(diopiContextHandle_t ctx,
+                                             diopiTensorHandle_t out,
+                                             diopiConstTensorHandle_t points,
+                                             diopiConstTensorHandle_t idx,
+                                             diopiConstTensorHandle_t weight,
+                                             int64_t b,
+                                             int64_t c,
+                                             int64_t m,
+                                             int64_t n);
 /**
- * @brief Backward function for Performs weighted linear interpolation on 3 features.
+ * @brief Backward function for Performs weighted linear interpolation on 3
+ * features.
  * @param[in] ctx diopi context.
  * @param grad_out   the gradient of ``out``.
  * @param[out] grad_points the gradient of ``points``.
  * @sa definition of other parameters, refer to diopiThreeInterpolate().
  */
-DIOPI_API diopiError_t diopiThreeInterpolateBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t idx,
-                                                     diopiConstTensorHandle_t weight, diopiTensorHandle_t grad_points, int64_t b, int64_t c, int64_t n, int64_t m);
+DIOPI_API diopiError_t
+diopiThreeInterpolateBackward(diopiContextHandle_t ctx,
+                              diopiTensorHandle_t grad_points,
+                              diopiConstTensorHandle_t grad_out,
+                              diopiConstTensorHandle_t idx,
+                              diopiConstTensorHandle_t weight,
+                              int64_t b,
+                              int64_t c,
+                              int64_t n,
+                              int64_t m);
 
 /**
- * @brief Find the top-3 nearest neighbors of the target set from the source set.
+ * @brief Find the top-3 nearest neighbors of the target set from the source
+ set.
  * @param[in] ctx diopi context.
  * @param unknown   shape (B, N, 3), points set that needs to
-     find the nearest neighbors. 
+     find the nearest neighbors.
  * @param known   shape (B, M, 3), points set that is used
-     to find the nearest neighbors of points in target set. 
+     to find the nearest neighbors of points in target set.
  * @param b,n,m  unknown : shape (b, n, 3) known : shape (b, m, 3)
- * @param[out] dist2  shape (B, N, 3), L2 distance of each point in target set to their corresponding top three nearest neighbors.
+ * @param[out] dist2  shape (B, N, 3), L2 distance of each point in target set
+ to their corresponding top three nearest neighbors.
  * @param idx  index tensor for reference.
  */
-DIOPI_API diopiError_t diopiThreeNn(diopiContextHandle_t ctx, diopiConstTensorHandle_t unknown, diopiConstTensorHandle_t known, diopiTensorHandle_t dist2,
-                                    diopiTensorHandle_t idx, int64_t b, int64_t n, int64_t m);
+DIOPI_API diopiError_t diopiThreeNn(diopiContextHandle_t ctx,
+                                    diopiTensorHandle_t dist2,
+                                    diopiTensorHandle_t idx,
+                                    diopiConstTensorHandle_t unknown,
+                                    diopiConstTensorHandle_t known,
+                                    int64_t b,
+                                    int64_t n,
+                                    int64_t m);
 
 /**
  * @brief Temporal Interlace Shift.
@@ -1766,7 +2244,10 @@ DIOPI_API diopiError_t diopiThreeNn(diopiContextHandle_t ctx, diopiConstTensorHa
  * @param shift   Shift tensor with shape [N, num_segments].
  * @param[out] output Feature map after temporal interlace shift.
  */
-DIOPI_API diopiError_t diopiTinShift(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t shift, diopiTensorHandle_t output);
+DIOPI_API diopiError_t diopiTinShift(diopiContextHandle_t ctx,
+                                     diopiTensorHandle_t output,
+                                     diopiConstTensorHandle_t input,
+                                     diopiConstTensorHandle_t shift);
 /**
  * @brief Backward function for Temporal Interlace Shift.
  * @param[in] ctx diopi context.
@@ -1774,28 +2255,40 @@ DIOPI_API diopiError_t diopiTinShift(diopiContextHandle_t ctx, diopiConstTensorH
  * @param[out] grad_input the gradient of ``input``.
  * @sa definition of other parameters, refer to diopiTinShift().
  */
-DIOPI_API diopiError_t diopiTinShiftBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t shift, diopiTensorHandle_t grad_input);
+DIOPI_API diopiError_t
+diopiTinShiftBackward(diopiContextHandle_t ctx,
+                      diopiTensorHandle_t grad_input,
+                      diopiConstTensorHandle_t grad_output,
+                      diopiConstTensorHandle_t shift);
 
 /**
  * @brief UpFRIDn for 2d features.
  * @param[in] ctx diopi context.
  * @param input  Tensor with shape of (n, c, h, w).
  * @param kernel   Filter kernel.
- * @param up_x,up_y up (int | tuple[int], optional): Upsampling factor. If given a number,
-     we will use this factor for the both height and width side.
-     Defaults to 1. up_x, up_y = up
- * @param down_x,down_y down (int | tuple[int], optional): Downsampling factor. If given a
-     number, we will use this factor for the both height and width side.
+ * @param up_x,up_y up (int | tuple[int], optional): Upsampling factor. If given
+ a number, we will use this factor for the both height and width side. Defaults
+ to 1. up_x, up_y = up
+ * @param down_x,down_y down (int | tuple[int], optional): Downsampling factor.
+ If given a number, we will use this factor for the both height and width side.
      Defaults to 1. down_x, down_y = down
- * @param pad_x0, pad_x1, pad_y0, pad_y1 pad (tuple[int], optional): Padding for tensors, (x_pad, y_pad) or
-     (x_pad_0, x_pad_1, y_pad_0, y_pad_1). Defaults to (0, 0). 
-     pad_x0, pad_x1, pad_y0, pad_y1 = pad
+ * @param pad_x0, pad_x1, pad_y0, pad_y1 pad (tuple[int], optional): Padding for
+ tensors, (x_pad, y_pad) or (x_pad_0, x_pad_1, y_pad_0, y_pad_1). Defaults to
+ (0, 0). pad_x0, pad_x1, pad_y0, pad_y1 = pad
  * @param[out] out  Tensor after UpFIRDn.
  */
-DIOPI_API diopiError_t diopiUpfirdn2dOp(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t input,
-                                        diopiConstTensorHandle_t kernel, int64_t up_x, int64_t up_y,
-                                        int64_t down_x, int64_t down_y, int64_t pad_x0, int64_t pad_x1,
-                                        int64_t pad_y0, int64_t pad_y1);
+DIOPI_API diopiError_t diopiUpfirdn2dOp(diopiContextHandle_t ctx,
+                                        diopiTensorHandle_t* out,
+                                        diopiConstTensorHandle_t input,
+                                        diopiConstTensorHandle_t kernel,
+                                        int64_t up_x,
+                                        int64_t up_y,
+                                        int64_t down_x,
+                                        int64_t down_y,
+                                        int64_t pad_x0,
+                                        int64_t pad_x1,
+                                        int64_t pad_y0,
+                                        int64_t pad_y1);
 
 /**
  * @brief Convert kitti points(N, >=3) to voxels.
@@ -1823,62 +2316,81 @@ DIOPI_API diopiError_t diopiUpfirdn2dOp(diopiContextHandle_t ctx, diopiTensorHan
      https://github.com/open-mmlab/mmdetection3d/pull/904
      it is an experimental feature and we will appreciate it if
      you could share with us the failing cases.
- * @param[out] voxels, coors, num_points_per_voxel, voxel_num A tuple contains three elements. The first one is the output voxels with the shape of
-     [M, max_points, n_dim], which only contain points and returned when max_points != -1.
-     The second is the voxel coordinates with shape of [M, 3]. The last is number of point per voxel with the
-     shape of [M], which only returned when max_points != -1. voxel_num is for index select.
+ * @param[out] voxels, coors, num_points_per_voxel, voxel_num A tuple contains
+ three elements. The first one is the output voxels with the shape of [M,
+ max_points, n_dim], which only contain points and returned when max_points !=
+ -1. The second is the voxel coordinates with shape of [M, 3]. The last is
+ number of point per voxel with the shape of [M], which only returned when
+ max_points != -1. voxel_num is for index select.
  */
-DIOPI_API diopiError_t diopiHardVoxelize(diopiContextHandle_t ctx, diopiConstTensorHandle_t points,
-                                         diopiConstTensorHandle_t voxel_size,
-                                         diopiConstTensorHandle_t coors_range, diopiTensorHandle_t voxels,
-                                         diopiTensorHandle_t coors, diopiTensorHandle_t num_points_per_voxel,
-                                         diopiTensorHandle_t voxel_num, const int64_t max_points,
-                                         const int64_t max_voxels, const int64_t NDim,
-                                         const bool deterministic);
+DIOPI_API diopiError_t
+diopiHardVoxelize(diopiContextHandle_t ctx,
+                  diopiTensorHandle_t voxels,
+                  diopiTensorHandle_t coors,
+                  diopiTensorHandle_t num_points_per_voxel,
+                  diopiTensorHandle_t voxel_num,
+                  diopiConstTensorHandle_t points,
+                  diopiConstTensorHandle_t voxel_size,
+                  diopiConstTensorHandle_t coors_range,
+                  const int64_t max_points,
+                  const int64_t max_voxels,
+                  const int64_t NDim,
+                  const bool deterministic);
 /**
- * @brief Convert kitti points(N, >=3) to voxels(max_points == -1 or max_voxels == -1).
+ * @brief Convert kitti points(N, >=3) to voxels(max_points == -1 or max_voxels
+ * == -1).
  *  @param[in] ctx diopi context.
  * @sa definition of other parameters, refer to diopiHardVoxelize().
  */
-DIOPI_API diopiError_t diopiDynamicVoxelize(diopiContextHandle_t ctx, diopiConstTensorHandle_t points,
-                                            diopiConstTensorHandle_t voxel_size,
-                                            diopiConstTensorHandle_t coors_range, diopiTensorHandle_t coors,
-                                            const int64_t NDim);
+DIOPI_API diopiError_t
+diopiDynamicVoxelize(diopiContextHandle_t ctx,
+                     diopiTensorHandle_t coors,
+                     diopiConstTensorHandle_t points,
+                     diopiConstTensorHandle_t voxel_size,
+                     diopiConstTensorHandle_t coors_range,
+                     const int64_t NDim);
 
 /**
  * @brief Using the feature interpolation to obtain the position information
-          correspond to the refined rotate anchors and reconstruct the feature maps
-          in pixel-wise manner to achieve feature alignment.
+          correspond to the refined rotate anchors and reconstruct the feature
+ maps in pixel-wise manner to achieve feature alignment.
  * @param[in] ctx diopi context.
  * @param features   Input features with shape [N,C,H,W].
  * @param best_bboxes  Refined rotate anchors with
-     shape [N,H,W,5]. Coordinate format (cx,cx,h,w,a). 
+     shape [N,H,W,5]. Coordinate format (cx,cx,h,w,a).
  * @param spatial_scale float: The scale of feature map size and
      input image size.
  * @param points (int, optional): The number of sample points.
      Only 1 and 5 are supported. Defaults to 1.
  * @param[out] output  Refined features with shape [N,C,H,W].
  */
-DIOPI_API diopiError_t diopiRotatedFeatureAlign(diopiContextHandle_t ctx, diopiConstTensorHandle_t features,
-                                                diopiConstTensorHandle_t best_bboxes,
-                                                float spatial_scale,
-                                                int64_t points, diopiTensorHandle_t output);
+DIOPI_API diopiError_t
+diopiRotatedFeatureAlign(diopiContextHandle_t ctx,
+                         diopiTensorHandle_t output,
+                         diopiConstTensorHandle_t features,
+                         diopiConstTensorHandle_t best_bboxes,
+                         float spatial_scale,
+                         int64_t points);
 /**
- * @brief Backward function for Using the feature interpolation to obtain the position information
-          correspond to the refined rotate anchors and reconstruct the feature maps
-          in pixel-wise manner to achieve feature alignment.
+ * @brief Backward function for Using the feature interpolation to obtain the
+ position information correspond to the refined rotate anchors and reconstruct
+ the feature maps in pixel-wise manner to achieve feature alignment.
  * @param[in] ctx diopi context.
  * @param top_grad   the gradient of ``output``.
  * @param[out] bottom_grad the gradient of ``features``.
  * @sa definition of other parameters, refer to diopiRotatedFeatureAlign().
  */
-DIOPI_API diopiError_t diopiRotatedFeatureAlignBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t top_grad,
-                                                        diopiConstTensorHandle_t best_bboxes,
-                                                        float spatial_scale,
-                                                        int64_t points, diopiTensorHandle_t bottom_grad);
+DIOPI_API diopiError_t
+diopiRotatedFeatureAlignBackward(diopiContextHandle_t ctx,
+                                 diopiTensorHandle_t bottom_grad,
+                                 diopiConstTensorHandle_t top_grad,
+                                 diopiConstTensorHandle_t best_bboxes,
+                                 float spatial_scale,
+                                 int64_t points);
 
 /**
- * @brief Judging whether points are inside polygons, which is used in the ATSS assignment for the rotated boxes.
+ * @brief Judging whether points are inside polygons, which is used in the ATSS
+ assignment for the rotated boxes.
  * @param[in] ctx diopi context.
  * @param points  It has shape (B, 2), indicating (x, y).
      M means the number of predicted points.
@@ -1889,45 +2401,72 @@ DIOPI_API diopiError_t diopiRotatedFeatureAlignBackward(diopiContextHandle_t ctx
      1 indicates that the point is inside the polygon,
      0 indicates that the point is outside the polygon.
  */
-DIOPI_API diopiError_t diopiPointsInPolygons(diopiContextHandle_t ctx, diopiConstTensorHandle_t points, diopiConstTensorHandle_t polygons, diopiTensorHandle_t output);
+DIOPI_API diopiError_t diopiPointsInPolygons(diopiContextHandle_t ctx,
+                                             diopiTensorHandle_t output,
+                                             diopiConstTensorHandle_t points,
+                                             diopiConstTensorHandle_t polygons);
 
 /**
  * @brief Sparse ops.(only support pytorch now)
  */
-DIOPI_API diopiError_t diopiIndiceMaxpool(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiTensorHandle_t features,
+DIOPI_API diopiError_t diopiIndiceMaxpool(diopiContextHandle_t ctx,
+                                          diopiTensorHandle_t* out,
+                                          diopiTensorHandle_t features,
                                           diopiTensorHandle_t indicePairs,
                                           diopiTensorHandle_t indiceNum,
                                           int64_t numAct);
-DIOPI_API diopiError_t diopiIndiceMaxpoolBackward(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiTensorHandle_t features,
-                                                  diopiTensorHandle_t outFeatures,
-                                                  diopiTensorHandle_t outGrad,
-                                                  diopiTensorHandle_t indicePairs,
-                                                  diopiTensorHandle_t indiceNum);
-DIOPI_API diopiError_t diopiIndiceConv(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiTensorHandle_t features,
+DIOPI_API diopiError_t
+diopiIndiceMaxpoolBackward(diopiContextHandle_t ctx,
+                           diopiTensorHandle_t* out,
+                           diopiTensorHandle_t features,
+                           diopiTensorHandle_t outFeatures,
+                           diopiTensorHandle_t outGrad,
+                           diopiTensorHandle_t indicePairs,
+                           diopiTensorHandle_t indiceNum);
+DIOPI_API diopiError_t diopiIndiceConv(diopiContextHandle_t ctx,
+                                       diopiTensorHandle_t* out,
+                                       diopiTensorHandle_t features,
                                        diopiTensorHandle_t filters,
                                        diopiTensorHandle_t indicePairs,
                                        diopiTensorHandle_t indiceNum,
-                                       int64_t numActOut, int64_t _inverse,
+                                       int64_t numActOut,
+                                       int64_t _inverse,
                                        int64_t _subM);
-DIOPI_API diopiError_t diopiIndiceConvBackward(diopiContextHandle_t ctx, diopiTensorHandle_t* outlist,
-                                               diopiTensorHandle_t features, diopiTensorHandle_t filters, diopiTensorHandle_t outGrad,
-                                               diopiTensorHandle_t indicePairs, diopiTensorHandle_t indiceNum, int64_t _inverse,
+DIOPI_API diopiError_t diopiIndiceConvBackward(diopiContextHandle_t ctx,
+                                               diopiTensorHandle_t* outlist,
+                                               diopiTensorHandle_t features,
+                                               diopiTensorHandle_t filters,
+                                               diopiTensorHandle_t outGrad,
+                                               diopiTensorHandle_t indicePairs,
+                                               diopiTensorHandle_t indiceNum,
+                                               int64_t _inverse,
                                                int64_t _subM);
-DIOPI_API diopiError_t diopiFusedIndiceConvBatchnorm(diopiContextHandle_t ctx, diopiTensorHandle_t* out,
-                                                     diopiTensorHandle_t features, diopiTensorHandle_t filters, diopiTensorHandle_t bias,
-                                                     diopiTensorHandle_t indicePairs, diopiTensorHandle_t indiceNum, int64_t numActOut,
-                                                     int64_t _inverse, int64_t _subM);
+DIOPI_API diopiError_t
+diopiFusedIndiceConvBatchnorm(diopiContextHandle_t ctx,
+                              diopiTensorHandle_t* out,
+                              diopiTensorHandle_t features,
+                              diopiTensorHandle_t filters,
+                              diopiTensorHandle_t bias,
+                              diopiTensorHandle_t indicePairs,
+                              diopiTensorHandle_t indiceNum,
+                              int64_t numActOut,
+                              int64_t _inverse,
+                              int64_t _subM);
 
 /**
- * @brief Find the smallest polygons that surrounds all points in the point sets.
+ * @brief Find the smallest polygons that surrounds all points in the point
+ * sets.
  * @param[in] ctx diopi context.
  * @param pointsets  point sets with shape  (N, 18).
  * @param[out] polygons Return the smallest polygons with shape (N, 8).
  */
-DIOPI_API diopiError_t diopiMinAreaPolygons(diopiContextHandle_t ctx, diopiConstTensorHandle_t pointsets, diopiTensorHandle_t polygons);
+DIOPI_API diopiError_t diopiMinAreaPolygons(diopiContextHandle_t ctx,
+                                            diopiTensorHandle_t polygons,
+                                            diopiConstTensorHandle_t pointsets);
 
 /**
- * @brief Encoding the orientation information and generating orientation-sensitive features.
+ * @brief Encoding the orientation information and generating
+ orientation-sensitive features.
  * @param[in] ctx diopi context.
  * @param input  Input features with shape
      [num_output_planes, num_input_planes, num_orientations, H, W].
@@ -1936,18 +2475,28 @@ DIOPI_API diopiError_t diopiMinAreaPolygons(diopiContextHandle_t ctx, diopiConst
  * @param[out] output   Refined features with shape [num_output_planes *
      num_rotations, num_input_planes * num_orientations, H, W].
  */
-DIOPI_API diopiError_t diopiActiveRotatedFilter(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t indices, diopiTensorHandle_t output);
+DIOPI_API diopiError_t
+diopiActiveRotatedFilter(diopiContextHandle_t ctx,
+                         diopiTensorHandle_t output,
+                         diopiConstTensorHandle_t input,
+                         diopiConstTensorHandle_t indices);
 /**
- * @brief  Backward function for Encoding the orientation information and generating orientation-sensitive features.
+ * @brief  Backward function for Encoding the orientation information and
+ * generating orientation-sensitive features.
  * @param[in] ctx diopi context.
  * @param grad_out   the gradient of ``output``.
  * @param[out] grad_in the gradient of ``input``.
  * @sa definition of other parameters, refer to diopiActiveRotatedFilter().
  */
-DIOPI_API diopiError_t diopiActiveRotatedFilterBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_out, diopiConstTensorHandle_t indices, diopiTensorHandle_t grad_in);
+DIOPI_API diopiError_t
+diopiActiveRotatedFilterBackward(diopiContextHandle_t ctx,
+                                 diopiTensorHandle_t grad_in,
+                                 diopiConstTensorHandle_t grad_out,
+                                 diopiConstTensorHandle_t indices);
 
 /**
- * @brief Return generalized intersection-over-union (Jaccard index) between point sets and polygons(ConvexIou version).
+ * @brief Return generalized intersection-over-union (Jaccard index) between
+ point sets and polygons(ConvexIou version).
  * @param[in] ctx diopi context.
  * @param pointsets  It has shape (N, 18),
      indicating (x1, y1, x2, y2, ..., x9, y9) for each row.
@@ -1956,16 +2505,23 @@ DIOPI_API diopiError_t diopiActiveRotatedFilterBackward(diopiContextHandle_t ctx
  * @param[out] ious  Return the ious between point sets and polygons with the
      shape (N, K).
  */
-DIOPI_API diopiError_t diopiConvexIou(diopiContextHandle_t ctx, diopiConstTensorHandle_t pointsets, diopiConstTensorHandle_t polygons, diopiTensorHandle_t ious);
+DIOPI_API diopiError_t diopiConvexIou(diopiContextHandle_t ctx,
+                                      diopiTensorHandle_t ious,
+                                      diopiConstTensorHandle_t pointsets,
+                                      diopiConstTensorHandle_t polygons);
 /**
- * @brief Return generalized intersection-over-union (Jaccard index) between point sets and polygons(ConvexGiou version).
+ * @brief Return generalized intersection-over-union (Jaccard index) between
+ point sets and polygons(ConvexGiou version).
  * @param[in] ctx diopi context.
  * @param[out] output  The first element is the gious
      between point sets and polygons with the shape (N,). The second
      element is the gradient of point sets with the shape (N, 18).
  * @sa definition of other parameters, refer to diopiConvexIou().
  */
-DIOPI_API diopiError_t diopiConvexGiou(diopiContextHandle_t ctx, diopiConstTensorHandle_t pointsets, diopiConstTensorHandle_t polygons, diopiTensorHandle_t output);
+DIOPI_API diopiError_t diopiConvexGiou(diopiContextHandle_t ctx,
+                                       diopiTensorHandle_t output,
+                                       diopiConstTensorHandle_t pointsets,
+                                       diopiConstTensorHandle_t polygons);
 
 /**
  * @brief Sort indices.
@@ -1983,30 +2539,41 @@ DIOPI_API diopiError_t diopiConvexGiou(diopiContextHandle_t ctx, diopiConstTenso
  * @param num_valid  (B, N) sum of mask, dim=2.
  * @param[out] out (B, N, 9) Sorted indices.
  */
-DIOPI_API diopiError_t diopiDiffIouRotatedSortVertices(diopiContextHandle_t ctx, diopiTensorHandle_t* out, diopiConstTensorHandle_t vertices, diopiConstTensorHandle_t mask,
-                                                       diopiConstTensorHandle_t num_valid);
+DIOPI_API diopiError_t
+diopiDiffIouRotatedSortVertices(diopiContextHandle_t ctx,
+                                diopiTensorHandle_t* out,
+                                diopiConstTensorHandle_t vertices,
+                                diopiConstTensorHandle_t mask,
+                                diopiConstTensorHandle_t num_valid);
 
 /**
- * @brief This is an implementation of the 2D Chamfer Distance. It has been used in the paper `Oriented RepPoints for Aerial Object
+ * @brief This is an implementation of the 2D Chamfer Distance. It has been used
+ in the paper `Oriented RepPoints for Aerial Object
  *        Detection (CVPR 2022) <https://arxiv.org/abs/2105.11111>_`.
  * @param[in] ctx diopi context.
- * @param xyz1 (Tensor): Point set with shape (B, N, 2). 
- * @param xyz2 (Tensor): Point set with shape (B, N, 2). 
+ * @param xyz1 (Tensor): Point set with shape (B, N, 2).
+ * @param xyz2 (Tensor): Point set with shape (B, N, 2).
  * @param[out] dist1,dist2,idx1,idx2 out sequence[Tensor]:
      - dist1 (Tensor): Chamfer distance (xyz1 to xyz2) with
-         shape (B, N). 
+         shape (B, N).
      - dist2 (Tensor): Chamfer distance (xyz2 to xyz1) with
-         shape (B, N). 
+         shape (B, N).
      - idx1 (Tensor): Index of chamfer distance (xyz1 to xyz2)
-         with shape (B, N), which be used in compute gradient. 
+         with shape (B, N), which be used in compute gradient.
      - idx2 (Tensor): Index of chamfer distance (xyz2 to xyz2)
-         with shape (B, N), which be used in compute gradient. 
+         with shape (B, N), which be used in compute gradient.
  */
-DIOPI_API diopiError_t diopiChamferDistance(diopiContextHandle_t ctx, diopiConstTensorHandle_t xyz1, diopiConstTensorHandle_t xyz2, diopiTensorHandle_t dist1,
-                                            diopiTensorHandle_t dist2, diopiTensorHandle_t idx1, diopiTensorHandle_t idx2);
+DIOPI_API diopiError_t diopiChamferDistance(diopiContextHandle_t ctx,
+                                            diopiTensorHandle_t dist1,
+                                            diopiTensorHandle_t dist2,
+                                            diopiTensorHandle_t idx1,
+                                            diopiTensorHandle_t idx2,
+                                            diopiConstTensorHandle_t xyz1,
+                                            diopiConstTensorHandle_t xyz2);
 /**
- * @brief Backward function for the 2D Chamfer Distance. It has been used in the paper `Oriented RepPoints for Aerial Object
- *        Detection (CVPR 2022) <https://arxiv.org/abs/2105.11111>_`.
+ * @brief Backward function for the 2D Chamfer Distance. It has been used in the
+ * paper `Oriented RepPoints for Aerial Object Detection (CVPR 2022)
+ * <https://arxiv.org/abs/2105.11111>_`.
  * @param[in] ctx diopi context.
  * @param grad_dist1   the gradient of ``dist1``.
  * @param grad_dist2   the gradient of ``dist2``.
@@ -2014,40 +2581,73 @@ DIOPI_API diopiError_t diopiChamferDistance(diopiContextHandle_t ctx, diopiConst
  * @param grad_xyz2   the gradient of ``xyz2``.
  * @sa definition of other parameters, refer to diopiChamferDistance().
  */
-DIOPI_API diopiError_t diopiChamferDistanceBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t xyz1, diopiConstTensorHandle_t xyz2,
-                                                    diopiConstTensorHandle_t idx1, diopiConstTensorHandle_t idx2, diopiConstTensorHandle_t grad_dist1, diopiConstTensorHandle_t grad_dist2,
-                                                    diopiTensorHandle_t grad_xyz1, diopiTensorHandle_t grad_xyz2);
+DIOPI_API diopiError_t
+diopiChamferDistanceBackward(diopiContextHandle_t ctx,
+                             diopiTensorHandle_t grad_xyz1,
+                             diopiTensorHandle_t grad_xyz2,
+                             diopiConstTensorHandle_t xyz1,
+                             diopiConstTensorHandle_t xyz2,
+                             diopiConstTensorHandle_t idx1,
+                             diopiConstTensorHandle_t idx2,
+                             diopiConstTensorHandle_t grad_dist1,
+                             diopiConstTensorHandle_t grad_dist2);
 
 /**
- * @brief The operation of precision RoI pooling. The implementation of PrRoIPool is modified from https://github.com/vacancy/PreciseRoIPooling/
+ * @brief The operation of precision RoI pooling. The implementation of
+ PrRoIPool is modified from https://github.com/vacancy/PreciseRoIPooling/
  * @param[in] ctx diopi context.
- * @param input (torch.Tensor): The feature map. 
+ * @param input (torch.Tensor): The feature map.
  * @param rois (torch.Tensor): The RoI bboxes in [tl_x, tl_y, br_x, br_y]
      format.
- * @param pooled_height,pooled_width output_size (Union[int, tuple]): h, w. pooled_height=h pooled_width=w.
+ * @param pooled_height,pooled_width output_size (Union[int, tuple]): h, w.
+ pooled_height=h pooled_width=w.
  * @param spatial_scale (float, optional): scale the input boxes by this number.
      Defaults to 1.0.
  * @param[out] output The pooled results.
  */
-DIOPI_API diopiError_t diopiPrroiPool(diopiContextHandle_t ctx, diopiConstTensorHandle_t input, diopiConstTensorHandle_t rois, diopiTensorHandle_t output,
-                                      int64_t pooled_height, int64_t pooled_width, float spatial_scale);
+DIOPI_API diopiError_t diopiPrroiPool(diopiContextHandle_t ctx,
+                                      diopiTensorHandle_t output,
+                                      diopiConstTensorHandle_t input,
+                                      diopiConstTensorHandle_t rois,
+                                      int64_t pooled_height,
+                                      int64_t pooled_width,
+                                      float spatial_scale);
 /**
- * @brief Backward function for the operation of precision RoI pooling. The implementation of PrRoIPool is modified from https://github.com/vacancy/PreciseRoIPooling/(grad of input)
+ * @brief Backward function for the operation of precision RoI pooling. The
+ * implementation of PrRoIPool is modified from
+ * https://github.com/vacancy/PreciseRoIPooling/(grad of input)
  * @param[in] ctx diopi context.
  * @param grad_output   the gradient of ``output``.
  * @param[out] grad_input the gradient of ``input``.
  * @sa definition of other parameters, refer to diopiPrroiPool().
  */
-DIOPI_API diopiError_t diopiPrroiPoolbackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t rois, diopiTensorHandle_t grad_input,
-                                              int64_t pooled_height, int64_t pooled_width, float spatial_scale);
+DIOPI_API diopiError_t
+diopiPrroiPoolbackward(diopiContextHandle_t ctx,
+                       diopiTensorHandle_t grad_input,
+                       diopiConstTensorHandle_t grad_output,
+                       diopiConstTensorHandle_t rois,
+                       int64_t pooled_height,
+                       int64_t pooled_width,
+                       float spatial_scale);
 /**
- * @brief The operation of precision RoI pooling. The implementation of PrRoIPool is modified from https://github.com/vacancy/PreciseRoIPooling/(grad of rois)
+ * @brief The operation of precision RoI pooling. The implementation of
+ * PrRoIPool is modified from https://github.com/vacancy/PreciseRoIPooling/(grad
+ * of rois)
  * @param[in] ctx diopi context.
  * @param[out] grad_rois the gradient of ``rois``.
- * @sa definition of other parameters, refer to diopiPrroiPool(), diopiPrroiPoolbackward().
+ * @sa definition of other parameters, refer to diopiPrroiPool(),
+ * diopiPrroiPoolbackward().
  */
-DIOPI_API diopiError_t diopiPrroiPoolCoorBackward(diopiContextHandle_t ctx, diopiConstTensorHandle_t output, diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t input, diopiConstTensorHandle_t rois, diopiTensorHandle_t grad_rois,
-                                                  int64_t pooled_height, int64_t pooled_width, float spatial_scale);
+DIOPI_API diopiError_t
+diopiPrroiPoolCoorBackward(diopiContextHandle_t ctx,
+                           diopiTensorHandle_t grad_rois,
+                           diopiConstTensorHandle_t output,
+                           diopiConstTensorHandle_t grad_output,
+                           diopiConstTensorHandle_t input,
+                           diopiConstTensorHandle_t rois,
+                           int64_t pooled_height,
+                           int64_t pooled_width,
+                           float spatial_scale);
 
 #if defined(__cplusplus)
 }
