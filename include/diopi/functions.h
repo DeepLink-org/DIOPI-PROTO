@@ -1,7 +1,8 @@
-/**************************************************************************************************
- * Copyright (c) 2022, SenseTime Inc.
- *
- *************************************************************************************************/
+/**
+ * @file
+ * @author pjlab
+ * @copyright  (c) 2023, SenseTime Inc.
+ */
 
 #ifndef _PROJECT_DIOPERATOR_INTERFACE_FUNCTIONS_H_
 #define _PROJECT_DIOPERATOR_INTERFACE_FUNCTIONS_H_
