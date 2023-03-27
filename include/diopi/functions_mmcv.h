@@ -1,7 +1,7 @@
 /**
  * @file
- * @author OpenComputeLab
- * @copyright  (c) 2023, OpenComputeLab.
+ * @author DeepLink
+ * @copyright  (c) 2023, DeepLink.
  */
 
 #ifndef _PROJECT_DIOPERATOR_INTERFACE_FUNCTIONS_MMCV_H_
