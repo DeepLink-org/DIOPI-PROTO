@@ -867,6 +867,8 @@ DIOPI_API diopiError_t diopiNormalTensorScalar(diopiContextHandle_t ctx, diopiTe
 DIOPI_API diopiError_t diopiNormalScalarTensor(diopiContextHandle_t ctx, diopiTensorHandle_t out, double mean, diopiConstTensorHandle_t std);
 DIOPI_API diopiError_t diopiNormalTensor(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t mean, diopiConstTensorHandle_t std);
 DIOPI_API diopiError_t diopiNormalInp(diopiContextHandle_t ctx, diopiTensorHandle_t inout, double mean, double std);
+
+DIOPI_API diopiError_t diopiMeshGrid(diopiContextHandle_t ctx, diopiTensorHandle_t* outs, int64_t outsNum, diopiConstTensorHandle_t* inputs, int64_t inputsNum);
 /**
  * \brief Applies Layer Normalization over a mini-batch of inputs.
  */
