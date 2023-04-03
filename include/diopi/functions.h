@@ -210,6 +210,7 @@ DIOPI_API diopiError_t diopiBCELossBackward(diopiContextHandle_t ctx, diopiTenso
 /**
  * \brief Element-wise math functions
  */
+DIOPI_API diopiError_t diopiSignInp(diopiContextHandle_t ctx, diopiTensorHandle_t input);
 DIOPI_API diopiError_t diopiSign(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input);
 
 DIOPI_API diopiError_t diopiAbsInp(diopiContextHandle_t ctx, diopiTensorHandle_t input);
