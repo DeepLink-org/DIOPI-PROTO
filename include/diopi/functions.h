@@ -46,10 +46,11 @@ DIOPI_RT_API const char* diopiGetLastErrorString();
 
 /**
  * @brief Applies a 2D convolution over an input image composed of several input planes.
+ * @brief the data type: dtype=[Dtype.float32, Dtype.float16, Dtype.float64]
  * @param[in] ctx Context environment.
- * @param input tensor of shape (N, C_in, L_in), (N, C_in, H_in, W_in), or (N, C_in, D_in, H_in, W_in)
- * @param weight tensor of shape (C_out, C_in // groups, *kernel_size); dimension of kernel_size must match the number of input spatial dimensions
- * @param bias optional_tensor
+ * @param input the input tensor
+ * @param weight the weight tensor; dimension of kernel_size must match the number of input spatial dimensions
+ * @param bias bias tensor
  * @param stride single value or an array with dimension matching the number of input spatial dimensions
  * @param padding single value or an array with dimension matching the number of input spatial dimensions
  * @param dilation single value or an array with dimension matching the number of input spatial dimensions
@@ -62,24 +63,19 @@ DIOPI_API diopiError_t diopiConvolution2d(diopiContextHandle_t ctx, diopiTensorH
 
 /**
  * @brief Backward pass for convolution2d. Computes gradients for input, weight, and bias.
-
+ * @brief the data type: dtype=[Dtype.float32, Dtype.float16, Dtype.float64]
  * @param[in] ctx Context environment.
- * @param grad_output tensor of shape (N, C_out, L_out), (N, C_out, H_out, W_out), or (N, C_out, D_out, H_out, W_out)
- * @param input tensor of shape (N, C_in, L_in), (N, C_in, H_in, W_in), or (N, C_in, D_in, H_in, W_in)
- * @param weight tensor of shape (C_out, C_in // groups, *kernel_size); dimension of kernel_size must match the number of input spatial dimensions
+ * @param grad_output the grad tensor of output
  * @param bias_sizes if specified, indicates that a bias was used in the forward pass and contains the shape
  *       of the bias. While the bias shape can be computed from other inputs, it is provided to this function for
  *       ease of use. The bias shape is (weight.shape[0]) for normal convolution and (weight.shape[1] * groups)
  *       for transposed convolution.
- * @param stride single value or an array with dimension matching the number of input spatial dimensions
- * @param padding single value or an array with dimension matching the number of input spatial dimensions
- * @param dilation single value or an array with dimension matching the number of input spatial dimensions
  * @param transposed boolean indicating whether the convolution is transposed
  * @param output_padding single value or dimension == number of input spatial dimensions; only supported when transposed is true
- * @param groups number of groups for grouped convolution
  * @param[out] grad_input the grad of input
  * @param grad_weight the grad of weight
  * @param grad3 the grad of bias
+ * @sa Other parameters refer to diopiConvolution2d()
  */
 DIOPI_API diopiError_t diopiConvolution2dBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiTensorHandle_t grad_weight,
                                                   diopiTensorHandle_t grad3, diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t input,
@@ -88,12 +84,13 @@ DIOPI_API diopiError_t diopiConvolution2dBackward(diopiContextHandle_t ctx, diop
 
 /**
  * @brief Applies Batch Normalization for each channel across a batch of data.
+ * @brief dtype=[Dtype.float32, Dtype.float16, Dtype.float64]
  * @param[in] ctx Context environment.
  * @param input input tensor
- * @param weight (optional tensor)
- * @param bias (optional tensor)
- * @param running_mean (optional tensor) weighted average
- * @param running_var (optional tensor) weighted variance
+ * @param weight weight tensor
+ * @param bias bias tensor
+ * @param running_mean  weighted average tensor
+ * @param running_var weighted variance tensor
  * @param training check if in training mode
  * @param momentumUsed to calculate the running mean and variance during runtime, can be set to None, default value is 0.1.
  * @param eps The value added to the denominator during batch normalization to ensure numerical stability, with a default value of 1e-5.
@@ -108,19 +105,13 @@ DIOPI_API diopiError_t diopiBatchNorm(diopiContextHandle_t ctx, diopiTensorHandl
 
 /**
  * @brief compute the backward pass of batch normalization
+ * @brief dtype=[Dtype.float32, Dtype.float16, Dtype.float64]
  * @param[in] ctx Context environment.
  * @param grad_output Gradient of normalized layer output, with the same shape as the forward pass output.
- * @param input Input data
- * @param weight Optional weight parameter in the normalization layer
- * @param running_mean Mean computed during training
- * @param running_var Inverse standard deviation computed during training
- * @param save_mean Backup of mean computed during training
- * @param save_invstd Backup of inverse standard deviation computed during training
- * @param training check if in training mode
- * @param eps The value added to the denominator during batch normalization to ensure numerical stability, with a default value of 1e-5.
  * @param[out] grad_input Gradient of the input data, with the same shape as the input data.
- * @param grad_weight Gradient of the optional weight parameter, with the same shape as the weight parameter.
- * @param grad_bias Gradient of the optional bias parameter, with the same shape as the bias parameter.
+ * @param grad_weight Gradient of the weight parameter, with the same shape as the weight parameter.
+ * @param grad_bias Gradient of the bias parameter, with the same shape as the bias parameter.
+ * @sa Other parameters refer to diopiBatchNorm()
  */
 
 DIOPI_API diopiError_t diopiBatchNormBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiTensorHandle_t grad_weight,
@@ -131,7 +122,7 @@ DIOPI_API diopiError_t diopiBatchNormBackward(diopiContextHandle_t ctx, diopiTen
 /**
  * @brief Applies the rectified linear unit function element-wise
  * @param[in] ctx Context environment.
- * @param input the input tensor
+ * @param input the input tensor, dtype=[Dtype.float32, Dtype.float64]
  * @param[out] out the result tensor
  */
 DIOPI_API diopiError_t diopiRelu(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input);
@@ -179,7 +170,7 @@ DIOPI_API diopiError_t diopiLeakyReluBackward(diopiContextHandle_t ctx, diopiTen
 /**
  * @brief Applies 2D average-pooling operation in kH×kW regions by step size sH×sW steps.
  * @param[in] ctx Context environment.
- * @param input input tensor
+ * @param input input tensor, dtype = [Dtype.float32, Dtype.float64]
  * @param kernel_size The size of the pooling region. It can be a single number or a tuple.
  * @param stride The stride of the pooling operation. It can be a single number or a tuple.
  * @param padding  It can be a single number or a tuple.
@@ -253,13 +244,14 @@ DIOPI_API diopiError_t diopiSigmoidFocalLossBackward(diopiContextHandle_t ctx, d
                                                      diopiTensorHandle_t grad_input, float gamma, float alpha, diopiReduction_t reduction);
 
 /**
- * @brief Measures thee Cross Entropy between the target and input probabilities.
+ * @brief Measures thee Cross Entropy between the target and input probabilities. 
+ * @brief dtype=[Dtype.float32, Dtype.float64]
  * @param[in] ctx
  * @param input Input tensor representing the unnormalized scores, often referred to as logits.
  * @param target Target tensor representing the true class index or class probabilities.
- * @param weight (optional tensor) Manual rescaling weight for each class. Its size must be C if specified.
- * @param reduction (optional string) Specifies the reduction to apply to the output. 
- * @param ignore_index (optional int) Specifies a target value that is to be ignored and does not contribute to the input gradient. 
+ * @param weight  Manual rescaling weight for each class. Its size must be C if specified.
+ * @param reduction Specifies the reduction to apply to the output. 
+ * @param ignore_index  Specifies a target value that is to be ignored and does not contribute to the input gradient. 
  * Only used when targets are class indices. Default: -100
  * @param label_smoothing Float value in [0.0, 1.0]. Specifies the amount of smoothing to be applied while computing the loss.
  * @param[out] out the output tensor
@@ -274,11 +266,11 @@ DIOPI_API diopiError_t diopiCrossEntropyLossBackward(diopiContextHandle_t ctx, d
 /**
  * @brief Measures thee nll loss between the target and input probabilities.
  * @param[in] ctx Context environment.
- * @param input Input tensor, usually representing log probabilities.
- * @param target Target tensor representing class indices, with values in the range of [0, C).
- * @param weight (optional tensor) weights manually assigned to each class
- * @param reduction (optional string) Loss reduction mode, which can be none, sum, or mean.
- * @param ignore_index (optional int) Specifies a target value to be ignored and does not contribute to the input gradient. 
+ * @param input Input tensor, usually representing log probabilities. dtype = [Dtype.float32, Dtype.float64]
+ * @param target Target tensor representing class indices, with values in the range of [0, C). dtype = [Dtype.int64]
+ * @param weight weights manually assigned to each class. dtype = [Dtype.float32, Dtype.float64]
+ * @param reduction  Loss reduction mode, which can be none, sum, or mean.
+ * @param ignore_index  Specifies a target value to be ignored and does not contribute to the input gradient. 
  * This parameter can only be used when the target contains class indices, and its default value is -100.
  * @param[out] out the output tensor
  */
@@ -359,6 +351,7 @@ DIOPI_API diopiError_t diopiPowInpTensor(diopiContextHandle_t ctx, diopiTensorHa
 
 /**
  * @brief This function is used to perform addition operations between tensors.
+ * @brief dtype=[Dtype.float64, Dtype.float32, Dtype.float16, Dtype.int64, Dtype.int32, Dtype.int16, Dtype.int8, Dtype.uint8]
  * @param[in] ctx Context environment.
  * @param input the fisrst input tensor
  * @param other the second input tensor
@@ -367,12 +360,13 @@ DIOPI_API diopiError_t diopiPowInpTensor(diopiContextHandle_t ctx, diopiTensorHa
 */
 DIOPI_API diopiError_t diopiAdd(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
                                 diopiConstTensorHandle_t other, const diopiScalar_t* alpha);
+
 /**
  * @brief performs an in-place addition operation between a tensor and  another tensor.  
+ * @brief dtype=[Dtype.float64, Dtype.float32, Dtype.float16, Dtype.int64, Dtype.int32, Dtype.int16, Dtype.int8, Dtype.uint8]
  * @param[in] ctx Context environment.
  * @param input the fisrst input tensor and will be stored result
- * @param other the second input tensor
- * @param alpha Scaling factor, i.e., the scaling factor of the second tensor. The default value is 1, which means no scaling is applied.
+ * @sa Other parameters refer to diopiAdd().
  * 
 */
 DIOPI_API diopiError_t diopiAddInp(diopiContextHandle_t ctx, diopiTensorHandle_t input,
@@ -380,10 +374,8 @@ DIOPI_API diopiError_t diopiAddInp(diopiContextHandle_t ctx, diopiTensorHandle_t
 /**
  * @brief Add a scalar to a tensor.  
  * @param[in] ctx Context environment.
- * @param input the input tensor
  * @param other The scalar value to be added.
- * @param alpha factor, i.e., the scaling factor of the scalar.The default value is 1, which means no scaling is applied.
- * @param[out] out Output tensor for storing the result of the addition operation.
+ * @sa Other parameters refer to diopiAdd().
 */
 DIOPI_API diopiError_t diopiAddScalar(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
                                       const diopiScalar_t* other, const diopiScalar_t* alpha);
@@ -391,10 +383,7 @@ DIOPI_API diopiError_t diopiAddScalar(diopiContextHandle_t ctx, diopiTensorHandl
 /**
  * @brief performs an in-place addition operation between and a scalar
  * @param[in] ctx Context environment.
- * @param input the input tensor
- * @param other The scalar value to be added.
- * @param alpha factor, i.e., the scaling factor of the scalar.The default value is 1, which means no scaling is applied.
- * 
+ * @sa Other parameters refer to diopiAddScalar().
 */
 DIOPI_API diopiError_t diopiAddInpScalar(diopiContextHandle_t ctx, diopiTensorHandle_t input,
                                          const diopiScalar_t* other, const diopiScalar_t* alpha);
@@ -444,7 +433,7 @@ DIOPI_API diopiError_t diopiAddcdivInp(diopiContextHandle_t ctx, diopiTensorHand
 
 /**
  * @brief Performs matrix multiplication between mat1 and mat2, multiplies the result by scalar value alpha, 
- * and adds it to input tensor beta x input.
+ * @brief  adds it to input tensor beta x input.dtype=[Dtype.float32, Dtype.float64, Dtype.float16]
  * @param[in] ctx Context environment.
  * @param input the input tensor
  * @param mat1 the first martix
@@ -548,7 +537,7 @@ DIOPI_API diopiError_t diopiLtInp(diopiContextHandle_t ctx, diopiTensorHandle_t 
 /**
  * @brief Returns the mean value of all elements in the input tensor.
  * @param[in] ctx Context environment.
- * @param input the input tensor
+ * @param input the input tensor, dtype = [Dtype.float32, Dtype.float64, Dtype.float16]
  * @param dim  Dimension for reduction.
  * @param[out] out the output tensor depend on dim
  */
@@ -558,7 +547,7 @@ DIOPI_API diopiError_t diopiMean(diopiContextHandle_t ctx, diopiTensorHandle_t o
 /**
  * @brief Returns the sum value of all elements in the input tensor.
  * @param[in] ctx Context environment.
- * @param input the input tensor
+ * @param input the input tensor, dtype = [Dtype.float32, Dtype.float64, Dtype.float16]
  * @param dim Dimension for reduction.
  * @param[out] out the output tensor depend on dim
  */
@@ -605,7 +594,7 @@ DIOPI_API diopiError_t diopiSoftmaxBackward(diopiContextHandle_t ctx, diopiTenso
 /**
  * @brief Applies a log_softmax function.
  * @param[in] ctx Context environment.
- * @param input the input tensor
+ * @param input the input tensor, dtype = [Dtype.float32, Dtype.float64]
  * @param dim The dimension on which to apply the log_softmax function to the input tensor.
  * @param[out] out the output tensor
  */
@@ -668,9 +657,9 @@ DIOPI_API diopiError_t diopiNonzero(diopiContextHandle_t ctx, diopiTensorHandle_
 /**
  * @brief Applies a linear transformation to the incoming data: y=xAT+b.
  * @param[in] ctx Context environment.
- * @param input Input tensor
- * @param weight weight tensor, shape can be(out_features, in_features) or (in_features)
- * @param bias bias tensor,shape can be (out_features) or ()
+ * @param input Input tensor, dtype = [Dtype.float16, Dtype.float32, Dtype.float64]
+ * @param weight weight tensor,
+ * @param bias bias tensor
  * @param[out] out the output tensor
  */
 DIOPI_API diopiError_t diopiLinear(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
@@ -692,6 +681,7 @@ DIOPI_API diopiError_t diopiRoiAlignBackward(diopiContextHandle_t ctx, diopiTens
 
 /**
  * @brief Implements stochastic gradient descent optimizer
+ * @brief dtype=[Dtype.float32, Dtype.float16, Dtype.float64]
  * @param[in] ctx Context environment.
  * @param w //
  * @param dw //
@@ -1021,7 +1011,7 @@ DIOPI_API diopiError_t diopiIndexPut(diopiContextHandle_t ctx, diopiTensorHandle
 /**
  * @brief Distribution and random numbers.
  * @param[in] ctx Context environment.
- * @param inout the input and output tensor
+ * @param inout the input and output tensor, dtype = [Dtype.float32, Dtype.float64, Dtype.float16, Dtype.int64, Dtype.int32, Dtype.int16, Dtype.int8]
  * @param from The lower bound of the random function.
  * @param to The upper bound of the random function.
  * @param idx 
@@ -1032,12 +1022,7 @@ DIOPI_API diopiError_t diopiBernoulli(diopiContextHandle_t ctx, diopiTensorHandl
 DIOPI_API diopiError_t diopiBernoulliInp(diopiContextHandle_t ctx, diopiTensorHandle_t inout, int64_t idx);
 DIOPI_API diopiError_t diopiBernoulliScalar(diopiContextHandle_t ctx, diopiTensorHandle_t out, double p, int64_t idx);
 DIOPI_API diopiError_t diopiArange(diopiContextHandle_t ctx, diopiTensorHandle_t out, const diopiScalar_t* start, const diopiScalar_t* end, const diopiScalar_t* step);
-/**
- * @brief Returns a random arrangement of integers from 0 to n-1
- * @param[in] ctx Context environment.
- * @param n Upper bound of result tensor value (excluding)
- * @param[out] out the output
-*/
+
 DIOPI_API diopiError_t diopiRandperm(diopiContextHandle_t ctx, diopiTensorHandle_t out, int64_t n, int64_t idx);
 
 DIOPI_API diopiError_t diopiNormal(diopiContextHandle_t ctx, diopiTensorHandle_t out, double mean, double std);
