@@ -1471,7 +1471,11 @@ DIOPI_API diopiError_t diopiCol2Im(diopiContextHandle_t ctx, diopiTensorHandle_t
                                    diopiSize_t output_size, diopiSize_t kernel_size, diopiSize_t dilation, diopiSize_t padding, diopiSize_t stride);
 
 /**
- * \brief Repeats tensor input along the specified dimensions.
+ * @brief Repeats tensor input along the specified dimensions.
+ * @param[in] ctx Context environment.
+ * @param input the input tensor, dtype = [Dtype.float32, Dtype.float64].
+ * @param repeats_size  an integer array containing the number of repetitions needed on each dimension.
+ * @param[out] out the output tensor.
  */
 DIOPI_API diopiError_t diopiRepeat(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input, diopiSize_t repeats_size);
 
