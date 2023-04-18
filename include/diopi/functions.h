@@ -882,6 +882,16 @@ DIOPI_API diopiError_t diopiNormalInp(diopiContextHandle_t ctx, diopiTensorHandl
 DIOPI_API diopiError_t diopiMeshGrid(diopiContextHandle_t ctx, diopiTensorHandle_t* outs, diopiConstTensorHandle_t* inputs, int64_t inputsNum);
 /**
  * \brief Applies Layer Normalization over a mini-batch of inputs.
+ * dtype=[Dtype.float32, Dtype.float64, Dtype.float16].
+ * @param[in] ctx Context environment.
+ * @param[out] out normalized result.
+ * @param save_mean Mean tensor,the mean value for each feature channel of the input tensor.
+ * @param save_invstd Backup of inverse standard deviation computed during training.
+ * @param input input tensor.
+ * @param weight weight tensor.
+ * @param bias bias tensor.
+ * @param normalized_shape an array, input shape from an expected input of size
+ * @param eps float64 a value added to the denominator for numerical stability
  */
 DIOPI_API diopiError_t diopiLayerNorm(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiTensorHandle_t save_mean, diopiTensorHandle_t save_invstd,
                                       diopiConstTensorHandle_t input, diopiConstTensorHandle_t weight, diopiConstTensorHandle_t bias,
