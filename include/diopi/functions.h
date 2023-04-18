@@ -382,7 +382,19 @@ DIOPI_API diopiError_t diopiBitwiseOrInp(diopiContextHandle_t ctx, diopiTensorHa
 DIOPI_API diopiError_t diopiBitwiseOrScalar(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input, const diopiScalar_t* other);
 DIOPI_API diopiError_t diopiBitwiseOrInpScalar(diopiContextHandle_t ctx, diopiTensorHandle_t input, const diopiScalar_t* other);
 
+/**
+ * \brief Computes the bitwise NOT of the given input tensor. The input tensor must be of integral or Boolean types. For bool tensors, it computes the logical NOT.
+ * @param[in] ctx Context environment.
+ * @param input the input tensor, dtype=[Dtype.int16, Dtype.int32, Dtype.int64, Dtype.uint8, Dtype.int8, Dtype.bool].
+ * @param[out] out the result tensor.
+ */
 DIOPI_API diopiError_t diopiBitwiseNot(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input);
+
+/**
+ * \brief the in-place version of diopiBitwiseNot.
+ * @param[in] ctx Context environment.
+ * @param input the input tensor.
+ */
 DIOPI_API diopiError_t diopiBitwiseNotInp(diopiContextHandle_t ctx, diopiTensorHandle_t input);
 
 /**
@@ -622,22 +634,70 @@ DIOPI_API diopiError_t diopiWhere(diopiContextHandle_t ctx, diopiTensorHandle_t 
 
 /**
  * \brief Fills elements of self tensor with value where mask is True.
+ * @param[in] ctx Context environment.
+ * @param[out] out the result tensor.
+ * @param input the input tensor, dtype=[Dtype.float32, Dtype.float64, Dtype.float16].
+ * @param mask the boolean mask.
+ * @param value the value to fill in with.
  */
 DIOPI_API diopiError_t diopiMaskedFill(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input, diopiConstTensorHandle_t mask,
                                        diopiConstTensorHandle_t value);
+/**
+ * \brief the in-place version of diopiMaskedFill.
+ * @param[in] ctx Context environment.
+ * @param[out] out the result tensor.
+ * @param input the input tensor, dtype=[Dtype.float32, Dtype.float64, Dtype.float16].
+ * @param mask the boolean mask.
+ * @param value the value to fill in with.
+ */
 DIOPI_API diopiError_t diopiMaskedFillInp(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiConstTensorHandle_t mask, diopiConstTensorHandle_t value);
+/**
+ * \brief Fills elements of self tensor with scalar value where mask is True.
+ * @param[in] ctx Context environment.
+ * @param[out] out the result tensor.
+ * @param input the input tensor, dtype=[Dtype.float32, Dtype.float64, Dtype.float16].
+ * @param mask the boolean mask.
+ * @param value the value to fill in with, dtype=[Dtype.float16, Dtype.float32, Dtype.float64, Dtype.int16, Dtype.int32, Dtype.int64, Dtype.uint8, Dtype.int8, Dtype.bool].
+ */
 DIOPI_API diopiError_t diopiMaskedFillScalar(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input, diopiConstTensorHandle_t mask,
                                              const diopiScalar_t* value);
+/**
+ * \brief the in-place version of diopiMaskedFillScalar.
+ * @param[in] ctx Context environment.
+ * @param[out] input the result tensor.
+ * @param mask the boolean mask.
+ * @param value the value to fill in with, dtype=[Dtype.float16, Dtype.float32, Dtype.float64, Dtype.int16, Dtype.int32, Dtype.int64, Dtype.uint8, Dtype.int8, Dtype.bool].
+ */
 DIOPI_API diopiError_t diopiMaskedFillInpScalar(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiConstTensorHandle_t mask, const diopiScalar_t* value);
 
 /**
  * \brief Computes the reciprocal of the elements of input.
+ * @param[in] ctx Context environment.
+ * @param[out] out the result tensor.
  */
 DIOPI_API diopiError_t diopiReciprocal(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input);
+/**
+ * \brief the in-place version of reciprocal.
+ * @param[in] ctx Context environment.
+ * @param[out] input the result tensor.
+ */
 DIOPI_API diopiError_t diopiReciprocalInp(diopiContextHandle_t ctx, diopiTensorHandle_t input);
 
 /**
  * \brief Implements AdamW optimizer.
+ * @param[in] ctx Context environment.
+ * @param input the input tensor.
+ * @param grad the grad tensor.
+ * @param exp_avg the first momentum is related to the number of iterations, that is, the gradient mean value of the i th iteration.
+ * @param exp_avg_sq the second momentum is related to the number of iterations, that is, the mean value of the gradient square of the i iteration.
+ * @param max_exp_avg_sq the maximum second momentum. When the parameter 'amsgrad' is true, it will replace the second momentum to participate in the calculation.
+ * @param lr learning rate.
+ * @param beta1 coefficients used for computing running averages of gradient.
+ * @param beta2 square of coefficients.
+ * @param eps term added to the denominator to improve numerical stability.
+ * @param weight_decay weight decay coefficient.
+ * @param step step.
+ * @param amsgrad whether to use the AMSGrad variant of this algorithm from the paper `On the Convergence of Adam and Beyond`_.
  */
 DIOPI_API diopiError_t diopiAdamW(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t grad,
                                   diopiTensorHandle_t exp_avg, diopiTensorHandle_t exp_avg_sq, diopiTensorHandle_t max_exp_avg_sq,
@@ -652,21 +712,54 @@ DIOPI_API diopiError_t diopiConvTranspose2d(diopiContextHandle_t ctx, diopiTenso
 
 /**
  * \brief Extracts sliding local blocks from a batched input tensor.
+ * @param[in] ctx Context environment.
+ * @param[out] out the output tensor.
+ * @param input the input tensor, dtype = [Dtype.float32, Dtype.float64, Dtype.float16].
+ * @param dim int64, dimension in which unfolding happens.
+ * @param size int64, the size of each slice that is unfolded.
+ * @param step int64, the step between each slice.
  */
 DIOPI_API diopiError_t diopiUnfold(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input, int64_t dim, int64_t size, int64_t step);
+/**
+ * \brief Backward pass for diopiUnfold.
+ * @param[in] grad_output the grad tensor of output, with the same shape as the forward pass output.
+ * @param[out] grad_input the grad tensor of input, with the same shape as the forward pass input.
+ * @param input_sizes an array, the size of grad_input.
+ * @param dim int64, dimension in which unfolding happens.
+ * @param size int64, the size of each slice that is unfolded.
+ * @param step int64, the step between each slice.
+ */
 DIOPI_API diopiError_t diopiUnfoldBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiConstTensorHandle_t grad_output,
                                            diopiSize_t input_sizes, int64_t dim, int64_t size, int64_t step);
 
 /**
  * \brief Returns the cumulative sum of elements of input in the dimension dim.
+ * @param[in] ctx Context environment.
+ * @param[out] out the output tensor.
+ * @param dim the dimension to do the operation over.
  */
 DIOPI_API diopiError_t diopiCumsum(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input, int64_t dim);
 
 /**
  * \brief Computes batched the p-norm distance between each pair of the two collections of row vectors.
+ * @param[in] ctx Context environment.
+ * @param[out] out the output tensor.
+ * @param input1 input tensor of shape :math:`B \times P \times M`.
+ * @param input2 input tensor of shape :math:`B \times R \times M`.
+ * @param p double p value for the p-norm distance to calculate between each vector pair :math:`\in [0, \infty]`.
+ * @param compute_mode int64_t* the mode of compute.
  */
 DIOPI_API diopiError_t diopiCdist(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input1, diopiConstTensorHandle_t input2,
                                   double p, const int64_t* compute_mode);
+/**
+ * \brief Backward pass for cdist.
+ * @param[in] grad_output the grad tensor of output, with the same shape as the forward pass output.
+ * @param[out] grad_input the grad tensor of input, with the same shape as the forward pass input.
+ * @param input1 input tensor.
+ * @param input2 input tensor.
+ * @param p double p value for the p-norm distance to calculate between each vector pair :math:`\in [0, \infty]`.
+ * @param cdist input tensor.
+ */
 DIOPI_API diopiError_t diopiCdistBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiConstTensorHandle_t grad_output,
                                           diopiConstTensorHandle_t input1, diopiConstTensorHandle_t input2, double p, diopiConstTensorHandle_t cdist);
 
@@ -790,6 +883,11 @@ DIOPI_API diopiError_t diopiPad(diopiContextHandle_t ctx, diopiTensorHandle_t ou
 
 /**
  * \brief Roll the tensor along the given dimension(s).
+ * @param[in] ctx Context environment.
+ * @param[out] out the output tensor.
+ * @param input the input tensor.
+ * @param shifts The number of places by which the elements of the tensor are shifted.
+ * @param dims Axis along which to roll.
  */
 DIOPI_API diopiError_t diopiRoll(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input, diopiSize_t shifts, diopiSize_t dims);
 
@@ -800,6 +898,11 @@ DIOPI_API diopiError_t diopiFlip(diopiContextHandle_t ctx, diopiTensorHandle_t o
 
 /**
  * \brief Returns the matrix norm or vector norm of a given tensor.
+ * @param[in] ctx Context environment.
+ * @param[out] out the output tensor.
+ * @param input the input tesnor, dtype=[Dtype.float32, Dtype.float64, Dtype.float16].
+ * @param p an array, the order of norm.
+ * @param dim Specifies which dimension or dimensions of input to calculate the norm across.
  */
 DIOPI_API diopiError_t diopiNorm(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input, const diopiScalar_t* p, diopiSize_t dim);
 
@@ -863,6 +966,11 @@ DIOPI_API diopiError_t diopiIndexPut(diopiContextHandle_t ctx, diopiTensorHandle
 
 /**
  * \brief Distribution and random numbers.
+ * @param[in] ctx Context environment。
+ * @param inout the input and ouput tensor.
+ * @param from double, lower bound of uniformly distributed sampling.
+ * @param to double, upper bound of uniformly distributed sampling.
+ * @param idx
  */
 DIOPI_API diopiError_t diopiRandomInp(diopiContextHandle_t ctx, diopiTensorHandle_t inout, int64_t from, const int64_t* to, int64_t idx);
 DIOPI_API diopiError_t diopiUniformInp(diopiContextHandle_t ctx, diopiTensorHandle_t inout, double from, double to, int64_t idx);
@@ -896,6 +1004,20 @@ DIOPI_API diopiError_t diopiMeshGrid(diopiContextHandle_t ctx, diopiTensorHandle
 DIOPI_API diopiError_t diopiLayerNorm(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiTensorHandle_t save_mean, diopiTensorHandle_t save_invstd,
                                       diopiConstTensorHandle_t input, diopiConstTensorHandle_t weight, diopiConstTensorHandle_t bias,
                                       diopiSize_t normalized_shape, double eps);
+/**
+ * \brief Backward pass for diopiLayerNorm. Computes gradients for input, weight, and bias.
+ * dtype=[Dtype.float32, Dtype.float64, Dtype.float16].
+ * @param[in] grad_output the grad tensor of output.
+ * @param[out] grad_input the grad of input.
+ * @param grad_bias the grad of bias.
+ * @param grad_weight the grad of weight.
+ * @param mean Mean tensor,the mean value for each feature channel of the input tensor.
+ * @param rstd Backup of inverse standard deviation computed during training.
+ * @param input input tensor.
+ * @param weight weight tensor.
+ * @param bias bias tensor.
+ * @param normalized_shape an array, input shape from an expected input of size.
+ */
 DIOPI_API diopiError_t diopiLayerNormBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiTensorHandle_t grad_weight, diopiTensorHandle_t grad_bias,
                                               diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t input, diopiConstTensorHandle_t weight, diopiConstTensorHandle_t bias,
                                               diopiConstTensorHandle_t mean, diopiConstTensorHandle_t rstd, diopiSize_t normalized_shape);
