@@ -160,7 +160,7 @@ DIOPI_API diopiError_t diopiAdaptiveMaxPool2dBackward(diopiContextHandle_t ctx, 
 DIOPI_API diopiError_t diopiDropout(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiTensorHandle_t mask,
                                     diopiConstTensorHandle_t input, double p, bool train);
 /**
- * \brief the in-place version of dropout.
+ * @brief the in-place version of dropout.
  * @param[in] ctx Context environment.
  * @param input the input tensor. type = [float32, float64].
  * @param p double probability of an element to be zeroed.
