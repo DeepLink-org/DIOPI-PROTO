@@ -1577,8 +1577,7 @@ DIOPI_API diopiError_t diopiGroupNormBackward(diopiContextHandle_t ctx, diopiTen
 /**
  * @brief Returns the unique elements of the input tensor.
  * @param[in] ctx Context environment.
- * @param input the input tensor,type = [int64, float32, float64, float16, int16, 
- * int32, uint8, int8, bool]
+ * @param input the input tensor,type = [int64, float32, float64, float16, int16, int32, uint8, int8, bool]
  * @param dim Specifies the dimension along which the duplicates are removed. It can be None, 
  * which means removing duplicates from the entire input tensor.
  * @param sorted boolean, whether to sort the result in ascending order.
