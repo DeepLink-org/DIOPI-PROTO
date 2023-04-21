@@ -176,7 +176,7 @@ DIOPI_API diopiError_t diopiDropoutInp(diopiContextHandle_t ctx, diopiTensorHand
  * @param input the input tensor. type = [float32, float64].
  * @param target the target tensor. type = [float32, float64].
  * @param reduction Specifies the reduction to apply to the output.
- * @param[out] out the result tensor.
+ * @param[out] out the result tensor. type = [float32, float64].
  */
 DIOPI_API diopiError_t diopiMSELoss(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
                                     diopiConstTensorHandle_t target, diopiReduction_t reduction);
@@ -374,7 +374,7 @@ DIOPI_API diopiError_t diopiBaddbmmInp(diopiContextHandle_t ctx, diopiTensorHand
  * @param tensor1 the tensor to be multiplied. type = [float16, float32, float64].
  * @param tensor2 the tensor to be multiplied. type = [float16, float32, float64].
  * @param value multiplier tensor1 * tensor2, type=[float16, float32, float64].
- * @param[out] out the out tensor.
+ * @param[out] out the out tensor. type=[float16, float32, float64].
  */
 DIOPI_API diopiError_t diopiAddcmul(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
                                     diopiConstTensorHandle_t tensor1, diopiConstTensorHandle_t tensor2, const diopiScalar_t* value);
@@ -397,7 +397,7 @@ DIOPI_API diopiError_t diopiMatmul(diopiContextHandle_t ctx, diopiTensorHandle_t
  * @param input the input tensor to be added. type = [float16, float32, float64].
  * @param tensor1 the numerator tensor. type = [float16, float32, float64].
  * @param tensor2 the denominator tensor. type = [float16, float32, float64].
- * @param value multiplier for tensor1} / tensor2, type=[float16, float32, float64].
+ * @param value multiplier for tensor1 / tensor2, type=[float16, float32, float64].
  * @param[out] out the out tensor. type = [float16, float32, float64].
  */
 DIOPI_API diopiError_t diopiAddcdiv(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input,
