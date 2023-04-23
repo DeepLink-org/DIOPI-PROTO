@@ -154,8 +154,8 @@ DIOPI_API diopiError_t diopiAdaptiveMaxPool2dBackward(diopiContextHandle_t ctx, 
  * @param input the input tensor. type = [float32, float64].
  * @param p double probability of an element to be zeroed.
  * @param train bool apply dropout if is True.
- * @param mask the mask tensor, where each element's value is either 0 or 1. 
- * @param[out] out the result tensor.
+ * @param mask the mask tensor, where each element's value is either 0 or 1. type=[bool].
+ * @param[out] out the result tensor. type = [float32, float64].
  */
 DIOPI_API diopiError_t diopiDropout(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiTensorHandle_t mask,
                                     diopiConstTensorHandle_t input, double p, bool train);
@@ -165,7 +165,7 @@ DIOPI_API diopiError_t diopiDropout(diopiContextHandle_t ctx, diopiTensorHandle_
  * @param input the input tensor. type = [float32, float64].
  * @param p double probability of an element to be zeroed.
  * @param train bool apply dropout if is True.
- * @param mask the mask tensor, where each element's value is either 0 or 1.
+ * @param mask the mask tensor, where each element's value is either 0 or 1. type=[bool].
  */
 DIOPI_API diopiError_t diopiDropoutInp(diopiContextHandle_t ctx, diopiTensorHandle_t input, diopiTensorHandle_t mask,
                                        double p, bool train);
@@ -186,7 +186,7 @@ DIOPI_API diopiError_t diopiMSELoss(diopiContextHandle_t ctx, diopiTensorHandle_
  * @param grad_output the grad tensor of output. type = [float32, float64].
  * @param target the target tensor. type = [float32, float64].
  * @param reduction Specifies the reduction to apply to the output.
- * @param[out] grad_input the grad of input.
+ * @param[out] grad_input the grad of input. type = [float32, float64].
  */
 DIOPI_API diopiError_t diopiMSELossBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input, diopiConstTensorHandle_t grad_output,
                                             diopiConstTensorHandle_t input, diopiConstTensorHandle_t target, diopiReduction_t reduction);
@@ -752,7 +752,7 @@ DIOPI_API diopiError_t diopiMaskedFillInp(diopiContextHandle_t ctx, diopiTensorH
  * @param input the input tensor, type=[float32, float64, float16].
  * @param mask the boolean mask. type=[bool].
  * @param value the value to fill in with, type=[float32, float64, float16].
- * @param[out] out the result tensor.
+ * @param[out] out the result tensor. type=[float32, float64, float16].
  */
 DIOPI_API diopiError_t diopiMaskedFillScalar(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input, diopiConstTensorHandle_t mask,
                                              const diopiScalar_t* value);
@@ -838,7 +838,7 @@ DIOPI_API diopiError_t diopiUnfoldBackward(diopiContextHandle_t ctx, diopiTensor
 DIOPI_API diopiError_t diopiCumsum(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input, int64_t dim);
 
 /**
- * @param[out] out the output tensor.brief Computes batched the p-norm distance between each pair of the two collections of row vectors.
+ * @brief Computes batched the p-norm distance between each pair of the two collections of row vectors.
  * @param[in] ctx Context environment.
  * @param input1 input tensor of shape B * P * M. type=[float32, float64].
  * @param input2 input tensor of shape B * R * M. type=[float32, float64].
