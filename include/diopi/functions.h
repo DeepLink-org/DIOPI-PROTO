@@ -469,6 +469,7 @@ DIOPI_API diopiError_t diopiSqrtInp(diopiContextHandle_t ctx, diopiTensorHandle_
  */
 DIOPI_API diopiError_t diopiSqrt(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t input);
 
+
 /**
  * @brief the in-place version of diopiSin().
  * @param[in] input the input and output tensor and will be stored result tensor, 
@@ -523,6 +524,7 @@ DIOPI_API diopiError_t diopiSigmoid(diopiContextHandle_t ctx, diopiTensorHandle_
  */
 DIOPI_API diopiError_t diopiSigmoidBackward(diopiContextHandle_t ctx, diopiTensorHandle_t grad_input,
                                             diopiConstTensorHandle_t grad_output, diopiConstTensorHandle_t output);
+
 
 /**
  * @brief the in-place version of diopiExp().
@@ -1369,10 +1371,8 @@ DIOPI_API diopiError_t diopiOneHot(diopiContextHandle_t ctx, diopiTensorHandle_t
  * @param[in] ctx Context environment.
  * @param condition A boolean tensor of the same shape as x and y. For elements/positions where the corresponding value is true, 
  * the value from x is returned, otherwise the value from y is returned. type = [uint8, bool].
- * @param input the input tensor. type = [float16, float32, float64, int16,
- * int32, int64, uint8, int8, bool]
- * @param other the other tensor. type = [float16, float32, float64, int16,
- * int32, int64, uint8, int8, bool]
+ * @param input the input tensor. type = [float16, float32, float64, int16, int32, int64, uint8, int8, bool]
+ * @param other the other tensor. type = [float16, float32, float64, int16, int32, int64, uint8, int8, bool]
  * @param[out] out the output tensor. type = [float16, float32, float64, int16,int32, int64, uint8, int8, bool].
  */
 DIOPI_API diopiError_t diopiWhere(diopiContextHandle_t ctx, diopiTensorHandle_t out, diopiConstTensorHandle_t condition,
